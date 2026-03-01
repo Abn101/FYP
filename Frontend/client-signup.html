@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Client Sign Up - Lexie Gneie</title>
+    <link rel="stylesheet" href="index.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo">⚖ Legal System</div>
+        <ul class="nav-links"></ul>
+    </nav>
+
+    <main class="site-main">
+        <section class="form-container">
+            <h1>Client Sign Up</h1>
+            <p>Create your client account to submit requests and book consultations.</p>
+
+            <form id="signupForm" class="signup-form" novalidate>
+                <div class="form-field">
+                    <label for="name">Full name</label>
+                    <input id="name" name="name" type="text" required autocomplete="name">
+                </div>
+
+                <div class="form-field">
+                    <label for="email">Email</label>
+                    <input id="email" name="email" type="email" required autocomplete="email">
+                </div>
+
+                <div class="form-field">
+                    <label for="password">Password</label>
+                    <input id="password" name="password" type="password" required autocomplete="new-password" minlength="8">
+                </div>
+
+                <div class="form-field">
+                    <label for="confirm">Confirm password</label>
+                    <input id="confirm" name="confirm" type="password" required autocomplete="new-password" minlength="8">
+                </div>
+
+                <div class="form-message" id="formMessage" role="status" aria-live="polite"></div>
+
+                <div class="form-actions">
+                    <button id="submitBtn" class="btn primary" type="submit">Create account</button>
+                    <a class="btn ghost" href="signup.html">Back</a>
+                </div>
+            </form>
+        </section>
+    </main>
+
+    <footer class="site-footer">
+        <div class="footer-inner">
+            <div>© <span id="year-client"></span> Lexie Gneie</div>
+            <div class="footer-links">
+                <a href="#">Privacy</a>
+                <a href="#">Terms</a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+    document.getElementById('year-client').textContent = new Date().getFullYear();
+
+    const form = document.getElementById('signupForm');
+    const msg = document.getElementById('formMessage');
+    const submitBtn = document.getElementById('submitBtn');
+
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        msg.textContent = '';
+
+        const name = document.getElementById('name').value.trim();
+        const email = document.getElementById('email').value.trim();
+        const password = document.getElementById('password').value;
+        const confirm = document.getElementById('confirm').value;
+
+        if (!name || !email || !password || !confirm) {
+            msg.textContent = 'Please fill all fields.';
+            return;
+        }
+        if (password !== confirm) {
+            msg.textContent = 'Passwords do not match.';
+            return;
+        }
+
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Creating...';
+
+        try {
+            const res = await fetch('http://127.0.0.1:5000/signup', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name, email, password })
+            });
+
+            const data = await res.json().catch(() => ({ success: false, message: 'Invalid response from server' }));
+
+            if (!res.ok || !data.success) {
+                msg.textContent = data.message || 'Signup failed';
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Create account';
+                return;
+            }
+
+            // Save username and prepare frontend verify URL
+            try { localStorage.setItem('lg_username', name); } catch (e) {}
+            // Build frontend verify page URL
+            let verifyUrl = `verify.html?email=${encodeURIComponent(email)}`;
+            if (data && data.redirect) {
+                try {
+                    const u = new URL(data.redirect, window.location.origin);
+                    const eparam = u.searchParams.get('email');
+                    if (eparam) verifyUrl = `verify.html?email=${encodeURIComponent(eparam)}`;
+                } catch (e) {
+                    // ignore and fall back
+                }
+            }
+
+            // Show a clear frontend verify link and auto-redirect after 5 seconds
+            msg.innerHTML = `Signup successful. We've sent a verification code to <strong>${email}</strong>.<br>` +
+                            `<a href="login-selection.html">Go to login selection page</a> — you will be redirected in 5 seconds.`;
+            setTimeout(() => { window.location.href = 'login-selection.html'; }, 5000);
+        } catch (err) {
+            console.error(err);
+            msg.textContent = 'Network error while signing up.';
+        } finally {
+            submitBtn.disabled = false;
+            submitBtn.textContent = 'Create account';
+        }
+    });
+    </script>
+</body>
+</html>

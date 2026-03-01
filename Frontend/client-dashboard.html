@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+            <script src="auth.js"></script>
+        <script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
+    <meta charset="utf-8">
+    <title>Client Dashboard - Lexie Gneie</title>
+    <link rel="stylesheet" href="index.css">
+    <style>
+        .tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 18px;
+            justify-content: center;
+        }
+        .tab-btn {
+            padding: 8px 22px;
+            border: none;
+            border-radius: 6px 6px 0 0;
+            background: #f3f6fa;
+            color: #2563eb;
+            font-weight: 600;
+            font-size: 16px;
+            cursor: pointer;
+            outline: none;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.03);
+            transition: background 0.2s, color 0.2s;
+        }
+        .tab-btn.active, .tab-btn:focus {
+            background: #2563eb;
+            color: #fff;
+            box-shadow: 0 2px 8px rgba(37,99,235,0.08);
+        }
+        .tab-btn:hover:not(.active) {
+            background: #e0e7ff;
+            color: #1e40af;
+        }
+        .chat-sidebar {
+            position: fixed;
+            top: 0;
+            right: -350px;
+            width: 350px;
+            height: 100%;
+            background: #fff;
+            box-shadow: -2px 0 12px rgba(37,99,235,0.12);
+            z-index: 1000;
+            transition: right 0.3s;
+            overflow: auto;
+            display: block;
+        }
+        .chat-sidebar.open {
+            right: 0;
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <script>authCheck({ requiredRole: 'client' });</script>
+            <!-- Ensure logout button works: call setupLogoutButton after DOM is loaded -->
+            <script>
+                document.addEventListener('DOMContentLoaded', setupLogoutButton);
+            </script>
+    <nav class="navbar">
+        <div class="logo">⚖ Legal System</div>
+        <ul class="nav-links">
+            <li><a href="client-dashboard.html" class="active">Dashboard</a></li>
+            <li><a href="#" id="logoutBtn" class="btn primary" style="margin-left:8px;">Logout</a></li>
+        </ul>
+    </nav>
+
+    <main class="site-main">
+        <section class="dashboard simple-dashboard">
+            <header class="dash-header">
+                <div>
+                    <h1 id="greeting">Welcome, Client</h1>
+                </div>
+                <div class="dash-controls">
+                    <!-- Removed sign out button, logout is now in navbar -->
+                </div>
+            </header>
+            <!-- heading for available cases -->
+            <h2 class="section-heading">Available Case Types</h2>
+            <!-- center canvas for case-type cards -->
+            <div class="case-canvas">
+                <div id="caseTypesList" class="case-types-list" aria-live="polite">
+                    <!-- cards inserted here -->
+                </div>
+            </div>
+        </section>
+        <!-- New section for client requests -->
+        <section class="client-requests">
+            <h2 class="section-heading">Your Requests & Statuses</h2>
+            <div class="tabs">
+                <button class="tab-btn active" data-tab="pending">Pending</button>
+                <button class="tab-btn" data-tab="accepted">Accepted</button>
+                <button class="tab-btn" data-tab="rejected">Rejected</button>
+            </div>
+            <div class="request-canvas">
+                <div id="pendingRequests" class="client-requests-list tab-content"></div>
+                <div id="acceptedRequests" class="client-requests-list tab-content" style="display:none"></div>
+                <div id="rejectedRequests" class="client-requests-list tab-content" style="display:none"></div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Sidebar Chat Panel -->
+    <div id="chatSidebar" class="chat-sidebar" style="display:none;position:fixed;top:0;right:0;width:350px;height:100%;background:#fff;box-shadow:-2px 0 12px rgba(37,99,235,0.12);z-index:1000;transition:right 0.3s;overflow:auto;">
+        <div class="chatbot-header">
+            <span id="chatSidebarTitle">Conversation</span>
+            <button id="closeChatSidebar" class="chatbot-close-btn">&times;</button>
+        </div>
+        <div id="chatSidebarContent" class="chatbot-content-area"></div>
+        <div id="chatInputArea" class="chatbot-input-area" style="display:none;">
+            <textarea id="chatMessageInput" rows="2" class="chatbot-input" placeholder="Type your message..."></textarea>
+            <button id="sendChatMessageBtn" class="btn primary chatbot-send-btn">Send</button>
+        </div>
+    </div>
+
+    <footer class="site-footer">
+        <div class="footer-inner">
+            <div>© <span id="year-dash"></span> Lexie Gneie</div>
+            <div class="footer-links">
+                <a href="#">Privacy</a>
+                <a href="#">Terms</a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+    document.getElementById('year-dash').textContent = new Date().getFullYear();
+
+    // Optional: pull name from localStorage if set and set greeting
+    const name = localStorage.getItem('lg_username');
+    if (name) document.getElementById('greeting').textContent = `Welcome, ${name}`;
+
+    // No separate sign out button; logout handled by navbar button
+
+    // Populate case-type cards
+    const caseTypesList = document.getElementById('caseTypesList');
+    async function loadCaseTypes() {
+        let types = [
+            { id: 1, name: 'Family Law' },
+            { id: 2, name: 'Criminal Law' },
+            { id: 3, name: 'Property Law' },
+            { id: 4, name: 'Contract Dispute' }
+        ];
+
+        try {
+            const res = await fetch('http://127.0.0.1:5000/dashboard/case-types');
+            if (res.ok) {
+                const json = await res.json();
+                if (Array.isArray(json)) types = json;
+                else if (json && Array.isArray(json.data)) types = json.data;
+                else if (json && Array.isArray(json.caseTypes)) types = json.caseTypes;
+                else if (json && typeof json === 'object') {
+                    const arr = Object.values(json).find(v => Array.isArray(v));
+                    if (arr) types = arr;
+                }
+            }
+        } catch (e) {
+            // use sample
+        }
+
+        if (!Array.isArray(types)) types = [];
+
+        const normalize = (t) => {
+            if (t == null) return null;
+            if (typeof t === 'string') return { id: t, name: t };
+            if (typeof t !== 'object') return null;
+            const id = t.id ?? t._id ?? t.typeId ?? t.value ?? t.key ?? t.slug ?? null;
+            const name = t.name ?? t.title ?? t.label ?? t.type ?? t.caseType ?? t.case_name ?? null;
+            if (!id && !name) return null;
+            return { id: id ?? name, name: name ?? String(id) };
+        };
+
+        const normalized = types.map(normalize).filter(Boolean);
+        if (normalized.length === 0) {
+            caseTypesList.innerHTML = '<div class="empty">No case types available</div>';
+            return;
+        }
+
+        caseTypesList.innerHTML = normalized.map(t => `
+            <button class="case-type-card" data-id="${t.id}" aria-pressed="false">${t.name}</button>
+        `).join('');
+
+        // wire up card clicks
+        caseTypesList.querySelectorAll('.case-type-card').forEach(btn => {
+            btn.addEventListener('click', () => {
+                caseTypesList.querySelectorAll('.case-type-card').forEach(b => { b.classList.remove('active'); b.setAttribute('aria-pressed','false'); });
+                btn.classList.add('active');
+                btn.setAttribute('aria-pressed','true');
+                // save selection and navigate to lawyers page
+                const selection = { id: btn.dataset.id, name: btn.textContent.trim() };
+                try { localStorage.setItem('lg_caseType', JSON.stringify(selection)); } catch(e){}
+                const url = `client-lawyers.html?type=${encodeURIComponent(selection.id)}&name=${encodeURIComponent(selection.name)}`;
+                window.location.href = url;
+            });
+        });
+    }
+    loadCaseTypes();
+
+    // Populate client request cards
+    const clientRequestsList = document.getElementById('clientRequestsList');
+    async function loadClientRequests() {
+        let requests = [];
+        const username = localStorage.getItem('lg_username');
+        if (!username) {
+            document.getElementById('pendingRequests').innerHTML = '<div class="empty">Please log in to view your requests.</div>';
+            document.getElementById('acceptedRequests').innerHTML = '';
+            document.getElementById('rejectedRequests').innerHTML = '';
+            return;
+        }
+
+        try {
+            // Fetch requests from the correct endpoint
+            const res = await fetch(`http://127.0.0.1:5000/client-requests-by-name?client_name=${encodeURIComponent(username)}`);
+            if (res.ok) {
+                const json = await res.json();
+                if (json.success && Array.isArray(json.data)) requests = json.data;
+            }
+        } catch (e) {
+            // fallback sample data
+            requests = [
+                { client_name: username, lawyer_name: 'Sample Lawyer', case_type_name: 'Family Law', description: 'Sample description', status: 'Pending' }
+            ];
+        }
+
+        if (!Array.isArray(requests) || requests.length === 0) {
+            document.getElementById('pendingRequests').innerHTML = '<div class="empty">No requests found</div>';
+            document.getElementById('acceptedRequests').innerHTML = '';
+            document.getElementById('rejectedRequests').innerHTML = '';
+            return;
+        }
+
+        const pending = requests.filter(r => (r.status||'') === 'Pending');
+        const accepted = requests.filter(r => (r.status||'') === 'Accepted');
+        const rejected = requests.filter(r => (r.status||'') === 'Rejected');
+
+        document.getElementById('pendingRequests').innerHTML = pending.length ? pending.map(r => `
+            <div class="request-card improved-client-card" style="padding:28px 22px 22px 22px;min-width:320px;max-width:420px;margin:12px auto;box-shadow:0 8px 32px rgba(37,99,235,0.10);border-radius:18px;background:#f8fafc;">
+                <div class="request-type" style="font-size:1.25em;font-weight:800;color:#2563eb;margin-bottom:8px;">${r.case_type_name}</div>
+                <div class="request-status" style="font-size:1.05em;color:#475569;margin-bottom:2px;">Status: <span style="font-weight:700;color:${r.status==='Accepted'?'#2563eb':(r.status==='Rejected'?'#dc2626':'#1e40af')};">${r.status}</span></div>
+                <div class="request-lawyer" style="font-size:1em;margin-bottom:2px;"><strong>Lawyer:</strong> ${r.lawyer_name}</div>
+                <div class="request-desc" style="font-size:0.99em;color:#334155;margin-bottom:8px;"><strong>Details:</strong> ${r.description}</div>
+            </div>
+        `).join('') : '<div class="empty">No pending requests</div>';
+
+        document.getElementById('acceptedRequests').innerHTML = accepted.length ? accepted.map(r => `
+            <div class="request-card improved-client-card" data-id="${r.id !== undefined ? r.id : (r.request_id !== undefined ? r.request_id : '')}" style="padding:28px 22px 22px 22px;min-width:320px;max-width:420px;margin:12px auto;box-shadow:0 8px 32px rgba(37,99,235,0.10);border-radius:18px;background:#f8fafc;">
+                <div class="request-type" style="font-size:1.25em;font-weight:800;color:#2563eb;margin-bottom:8px;">${r.case_type_name}</div>
+                <div class="request-status" style="font-size:1.05em;color:#475569;margin-bottom:2px;">Status: <span style="font-weight:700;color:#2563eb;">${r.status}</span></div>
+                <div class="request-lawyer" style="font-size:1em;margin-bottom:2px;"><strong>Lawyer:</strong> ${r.lawyer_name}</div>
+                <div class="request-desc" style="font-size:0.99em;color:#334155;margin-bottom:8px;"><strong>Details:</strong> ${r.description}</div>
+                <div class="request-actions" style="margin-top:10px;display:flex;gap:10px;">
+                    <button class="btn primary conversation-btn" data-id="${r.id !== undefined ? r.id : (r.request_id !== undefined ? r.request_id : '')}" data-client="${r.client_name}" data-lawyer="${r.lawyer_name}">Conversation</button>
+                </div>
+            </div>
+        `).join('') : '<div class="empty">No accepted requests</div>';
+
+        document.getElementById('rejectedRequests').innerHTML = rejected.length ? rejected.map(r => `
+            <div class="request-card improved-client-card" style="padding:28px 22px 22px 22px;min-width:320px;max-width:420px;margin:12px auto;box-shadow:0 8px 32px rgba(220,38,38,0.10);border-radius:18px;background:#f8fafc;">
+                <div class="request-type" style="font-size:1.25em;font-weight:800;color:#dc2626;margin-bottom:8px;">${r.case_type_name}</div>
+                <div class="request-status" style="font-size:1.05em;color:#475569;margin-bottom:2px;">Status: <span style="font-weight:700;color:#dc2626;">${r.status}</span></div>
+                <div class="request-lawyer" style="font-size:1em;margin-bottom:2px;"><strong>Lawyer:</strong> ${r.lawyer_name}</div>
+                <div class="request-desc" style="font-size:0.99em;color:#334155;margin-bottom:8px;"><strong>Details:</strong> ${r.description}</div>
+            </div>
+        `).join('') : '<div class="empty">No rejected requests</div>';
+
+        // Save accepted requests globally for lookup
+        acceptedRequestsGlobal = accepted;
+
+        // Save accepted request IDs globally for chat lookup
+        acceptedRequestIds = accepted.map(r => r.id);
+
+        // Add event listeners for Conversation buttons (client side)
+        document.querySelectorAll('.conversation-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                let requestId = btn.getAttribute('data-id');
+                // Find the full request object from global using string comparison
+                const reqObj = acceptedRequestsGlobal.find(r => r.id == requestId || r.request_id == requestId);
+                const clientName = reqObj && reqObj.client_name ? reqObj.client_name : '';
+                const lawyerName = reqObj && reqObj.lawyer_name ? reqObj.lawyer_name : '';
+                // Show sidebar
+                const sidebar = document.getElementById('chatSidebar');
+                const content = document.getElementById('chatSidebarContent');
+                const title = document.getElementById('chatSidebarTitle');
+                const inputArea = document.getElementById('chatInputArea');
+                sidebar.style.display = 'block';
+                sidebar.classList.add('open');
+                title.textContent = `Conversation - ${lawyerName}`;
+                inputArea.style.display = '';
+                content.innerHTML = `<div><strong>Request ID:</strong> ${requestId}</div><div><strong>Client:</strong> ${clientName}</div><div><strong>Lawyer:</strong> ${lawyerName}</div><hr><div id='chatMessagesArea' style='margin-top:12px;max-height:350px;overflow-y:auto;'></div>`;
+                                content.innerHTML = `
+                                    <div style="margin-bottom:10px;">
+                                        <strong>Conversation to:</strong> ${lawyerName}<br>
+                                        <strong>Case:</strong> ${reqObj && reqObj.case_type_name ? reqObj.case_type_name : ''}
+                                    </div>
+                                    <hr>
+                                    <div id='chatMessagesArea' class='chatbot-content-area'></div>`;
+                                const chatArea = document.getElementById('chatMessagesArea');
+                // Load old messages once
+                async function loadOldMessages() {
+                    try {
+                        const resp = await fetch(`http://127.0.0.1:5000/get-messages/${requestId}`);
+                        const data = await resp.json();
+                        if (data.success && Array.isArray(data.messages)) {
+                                                        chatArea.innerHTML = data.messages.map(msg => {
+                                                                const isLawyer = msg.sender_type === 'lawyer';
+                                                                const bubbleClass = isLawyer ? 'chatbot-msg-user' : 'chatbot-msg-ai';
+                                                                return `
+                                                                    <div class="chatbot-msg-card ${bubbleClass}">
+                                                                        ${msg.message}
+                                                                        <span class="chatbot-msg-timestamp">${msg.timestamp}</span>
+                                                                    </div>
+                                                                `;
+                                                        }).join('');
+                            chatArea.scrollTop = chatArea.scrollHeight;
+                        }
+                    } catch (e) {}
+                }
+                loadOldMessages();
+                // Socket.IO setup
+                const socket = io("http://127.0.0.1:5000");
+                socket.emit("join", { request_id: requestId });
+                socket.on("new_message", function(data) {
+                    const isLawyer = data.sender_type === 'lawyer';
+                    const bubbleClass = isLawyer ? 'chatbot-msg-user' : 'chatbot-msg-ai';
+                    const messageDiv = document.createElement("div");
+                    messageDiv.className = `chatbot-msg-card ${bubbleClass}`;
+                    messageDiv.innerHTML = `${data.message}<span class='chatbot-msg-timestamp'>${data.timestamp || ''}</span>`;
+                    chatArea.appendChild(messageDiv);
+                    chatArea.scrollTop = chatArea.scrollHeight;
+                });
+                // Attach send handler
+                const sendBtn = document.getElementById('sendChatMessageBtn');
+                sendBtn.onclick = async function() {
+                    const msg = document.getElementById('chatMessageInput').value.trim();
+                    if (!msg) return;
+                    const payload = {
+                        request_id: reqObj && reqObj.id,
+                        sender_type: 'client',
+                        sender_name: clientName,
+                        message: msg
+                    };
+                    try {
+                        const resp = await fetch('http://127.0.0.1:5000/send-message', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(payload)
+                        });
+                        const result = await resp.json();
+                        // Only show error if truly failed and no socket message is broadcasted
+                        if (result.success) {
+                            document.getElementById('chatMessageInput').value = '';
+                        } else if (result.message && result.message.toLowerCase().includes('error')) {
+                            alert(result.message || 'Failed to send message.');
+                        }
+                    } catch (e) {
+                        alert('Error sending message.');
+                    }
+                };
+                // Sidebar close button handler
+                document.getElementById('closeChatSidebar').onclick = function() {
+                    sidebar.classList.remove('open');
+                    sidebar.style.display = 'none';
+                    document.getElementById('chatMessagesArea').innerHTML = '';
+                };
+            });
+        });
+
+        // Sidebar close button handler
+        document.addEventListener('DOMContentLoaded', function() {
+            const sidebar = document.getElementById('chatSidebar');
+            const closeBtn = document.getElementById('closeChatSidebar');
+            if (closeBtn) {
+                closeBtn.addEventListener('click', function() {
+                    sidebar.classList.remove('open');
+                });
+            }
+        });
+
+        // wire up tab clicks
+        setupTabs();
+    }
+    loadClientRequests();
+
+    // Function to load chat messages from backend
+    async function loadChatMessages(requestId) {
+        try {
+            const resp = await fetch(`http://127.0.0.1:5000/get-messages/${requestId}`);
+            const data = await resp.json();
+            if (data.success) {
+                renderChatMessages(data.messages);
+            } else {
+                document.getElementById('chatMessagesArea').innerHTML = `<div class="empty">${data.message}</div>`;
+            }
+        } catch (e) {
+            document.getElementById('chatMessagesArea').innerHTML = `<div class="empty">Failed to load messages.</div>`;
+        }
+    }
+
+    // Function to render chat messages in the sidebar
+    function renderChatMessages(messages) {
+        const area = document.getElementById('chatMessagesArea');
+        if (!messages || messages.length === 0) {
+            if (area.innerHTML !== '<div class="empty">No messages yet.</div>') {
+                area.innerHTML = '<div class="empty">No messages yet.</div>';
+            }
+            return;
+        }
+        // Only update DOM if message list has changed
+        const newHtml = messages.map(msg => {
+            const isLawyer = msg.sender_type === 'lawyer';
+            const align = isLawyer ? 'right' : 'left';
+            const bubbleColor = isLawyer ? '#2563eb' : '#e0e7ff';
+            const color = isLawyer ? '#fff' : '#222';
+            return `
+                <div style='margin-bottom:10px;text-align:${align};'>
+                    <span style='background:${bubbleColor};color:${color};padding:6px 12px;border-radius:12px;display:inline-block;'>${msg.message}</span>
+                    <div style='font-size:11px;color:#888;margin-top:2px;'>${msg.timestamp}</div>
+                </div>
+            `;
+        }).join('');
+        if (area.innerHTML !== newHtml) {
+            area.innerHTML = newHtml;
+        }
+    }
+
+    function setupTabs() {
+        const tabBtns = document.querySelectorAll('.tab-btn');
+        const tabContents = {
+            pending: document.getElementById('pendingRequests'),
+            accepted: document.getElementById('acceptedRequests'),
+            rejected: document.getElementById('rejectedRequests')
+        };
+        tabBtns.forEach(btn => {
+            btn.addEventListener('click', function() {
+                tabBtns.forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                Object.keys(tabContents).forEach(key => {
+                    tabContents[key].style.display = 'none';
+                });
+                tabContents[this.dataset.tab].style.display = '';
+            });
+        });
+    }
+    </script>
+</body>
+</html>

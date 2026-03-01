@@ -1,0 +1,116 @@
+{
+  "case_number": "81797-J of 2022",
+  "court": "Lahore High Court",
+  "judges": ["Farooq Haider", "Ali Zia Bajwa"],
+  "parties": {
+    "appellant": [
+      {"name": "Usman", "father_name": "Wali Muhammad"}
+    ],
+    "respondent": "The State",
+    "complainant": "Ibrar Hussain"
+  },
+  "case_type": "Criminal Appeal / Murder Reference / PSL Application",
+  "related_cases": [
+    "Murder Reference No. 23 of 2023",
+    "P.S.L.A. No. 81996 of 2022"
+  ],
+  "decision_date": "09-02-2026",
+  "facts": {
+    "incident_date": "26-07-2021",
+    "incident_time": "11:45 a.m.",
+    "location": "Civil Hospital and surrounding area, Tandlianwala, Faisalabad",
+    "victim": {"name": "Mukhtar Ahmad", "age": "Not mentioned"},
+    "summary": "The appellant Usman allegedly shot deceased Mukhtar Ahmad and injured Muhammad Imran during a land dispute altercation. Eyewitnesses were cited, but their reliability was questioned."
+  },
+  "investigation": {
+    "FIR_no": "434/2021",
+    "police_station": "Saddar Tandlianwala",
+    "investigating_officer": "Muhammad Ramzan, SI",
+    "arrests": [
+      {"name": "Usman", "date": "Not mentioned"}
+    ],
+    "evidence_collected": {
+      "firearms": [
+        {"type": ".30 bore pistol", "recovered_from": "Usman"}
+      ],
+      "crime_empties": {},
+      "other_items": ["Parcel with three live bullets"]
+    },
+    "forensic_reports": ["PFSA report Ex.PG"],
+    "medical_evidence": {
+      "post_mortem_by": "Dr. Muhammad Sufyan",
+      "total_injuries": "Not specified",
+      "entry_wounds_with_blackening": []
+    }
+  },
+  "legal_issues": [
+    {
+      "issue": "Delay in FIR registration",
+      "finding": "Unexplained delay in FIR registration and postmortem weakened prosecution case.",
+      "law": "Criminal Procedure Code S.154"
+    },
+    {
+      "issue": "Unreliability of eyewitnesses",
+      "finding": "Eyewitnesses were chance witnesses; statements contained dishonest improvements; ocular account not reliable."
+    },
+    {
+      "issue": "Medical evidence cannot establish identity",
+      "finding": "Medical evidence corroborates injury but cannot identify assailant."
+    },
+    {
+      "issue": "Motive not proven",
+      "finding": "No independent evidence substantiated alleged motive; motive considered immaterial for conviction."
+    },
+    {
+      "issue": "Compromised recovery and forensic evidence",
+      "finding": "Parcel containing firearm and bullets lacked proper custody; PFSA report unreliable."
+    },
+    {
+      "issue": "Benefit of doubt",
+      "finding": "Multiple doubts in ocular account, medical evidence, and recovery entitle appellant to acquittal."
+    },
+    {
+      "issue": "Acquittal judgment",
+      "finding": "Judgment of acquittal not perverse or arbitrary; protected by double presumption of innocence."
+    }
+  ],
+  "arguments": {
+    "appellant": [
+      "Delay in FIR; chance witnesses; dishonest improvements; medical evidence cannot establish identity; compromised forensic evidence; motive not proven; benefit of doubt applies."
+    ],
+    "respondent": [
+      "FIR registered; witnesses and medical evidence provided; firearm recovery and PFSA report support prosecution; motive exists due to land dispute."
+    ]
+  },
+  "counsel": {
+    "appellant": ["Abdul Khaliq Safrani", "Muhammad Ahmad Jhujh"],
+    "complainant": ["Rana Raza Mohy-ud-Din", "Arslan Shabbir"],
+    "state": ["Haroon Rasheed"]
+  },
+  "judgment_summary": {
+    "Criminal Appeal No.81797-J of 2022": "Allowed; appellant Usman acquitted; prior conviction and sentences set aside",
+    "Murder Reference No.23 of 2023": "Answered in Negative; death sentence not confirmed",
+    "P.S.L.A. No.81996 of 2022": "Dismissed",
+    "release_of_appellants": "Forthwith, if not required in any other case"
+  },
+  "legal_references": [
+    {"case_name": "HAROON SHAFIQUE v. The STATE", "citation": "2018 SCMR 2118"},
+    {"case_name": "Mst. ASIA BIBI v. The STATE", "citation": "PLD 2019 Supreme Court 64"},
+    {"case_name": "GHULAM ABBAS v. The STATE", "citation": "2021 SCMR 23"},
+    {"case_name": "PERVAIZ KHAN v. The STATE", "citation": "2022 SCMR 393"},
+    {"case_name": "ABDUL GHAFOOR v. The STATE", "citation": "2022 SCMR 1527"},
+    {"case_name": "MUHAMMAD ARIF v. The STATE", "citation": "2019 SCMR 631"},
+    {"case_name": "KHALID MEHMOOD v. The STATE", "citation": "2021 SCMR 810"},
+    {"case_name": "MUHAMMAD HAYAT v. The STATE", "citation": "1996 SCMR 1411"},
+    {"case_name": "AMIN ALI v. The STATE", "citation": "2011 SCMR 323"},
+    {"case_name": "ISHTIAQ HUSSAIN v. The STATE", "citation": "2021 SCMR 159"},
+    {"case_name": "MUHAMMAD ABRAS v. The STATE", "citation": "2025 SCMR 1145"},
+    {"case_name": "FATEH KHAN v. The STATE", "citation": "2025 SCMR 1408"},
+    {"case_name": "MUHAMMAD RAMZAN v. The STATE", "citation": "2025 SCMR 762"},
+    {"case_name": "MUHAMMAD BILAL v. The STATE", "citation": "2025 SCMR 1580"},
+    {"case_name": "MUHAMMAD ASGHAR v. The STATE", "citation": "2025 SCMR 1616"},
+    {"case_name": "HAJI PAIO KHAN v. SHER BIAZ", "citation": "2009 SCMR 803"},
+    {"case_name": "MUHAMMAD SHAFI alias KHDDOO v. The STATE", "citation": "2019 SCMR 1045"}
+  ],
+  "remarks": "Due to unexplained FIR delay, unreliable eyewitnesses, dishonest improvements, compromised forensic evidence, and unproven motive, the appellant Usman is acquitted and prior convictions are set aside."
+}

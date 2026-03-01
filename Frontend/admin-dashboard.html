@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+            <script src="auth.js"></script>
+        <script>
+            // Simple admin auth check
+            (function() {
+                const user = JSON.parse(localStorage.getItem('authUser') || 'null');
+                if (!user || user.role !== 'admin') {
+                    window.location.href = 'login-selection.html';
+                }
+            })();
+        </script>
+    <meta charset="UTF-8">
+    <title>Admin Dashboard - Case Types</title>
+    <link rel="stylesheet" href="index.css">
+    <style>
+        .admin-cases-container {
+            max-width: 900px;
+            margin: 40px auto;
+            padding: 24px;
+            background: #fff;
+            border-radius: 10px;
+            box-shadow: 0 2px 16px rgba(37,99,235,0.08);
+        }
+        .admin-cases-header {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 18px;
+            margin-bottom: 32px;
+        }
+        .admin-cases-header h1 {
+            font-size: 2.6rem;
+            font-weight: 800;
+            margin: 0 24px 0 0;
+            color: #22223b;
+            letter-spacing: -1px;
+        }
+        .add-case-form {
+            display: flex;
+            gap: 12px;
+            flex: 1 1 400px;
+        }
+        .add-case-form input {
+            padding: 10px 14px;
+            border-radius: 8px;
+            border: 1.5px solid #cbd5e1;
+            font-size: 1.1rem;
+            background: #f8fafc;
+            min-width: 180px;
+        }
+        .add-case-form button {
+            padding: 10px 24px;
+            background: linear-gradient(90deg, #2563eb 60%, #1e3a8a 100%);
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 1.1rem;
+            box-shadow: 0 2px 8px rgba(37,99,235,0.10);
+            cursor: pointer;
+            transition: background 0.18s, color 0.18s;
+        }
+        .add-case-form button:disabled {
+            background: #a5b4fc;
+            cursor: not-allowed;
+        }
+        .case-cards {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 28px;
+            margin-top: 18px;
+        }
+        .case-card {
+            background: #f8fafc;
+            border-radius: 18px;
+            padding: 32px 28px;
+            min-width: 260px;
+            min-height: 90px;
+            box-shadow: 0 8px 32px rgba(37,99,235,0.10);
+            flex: 1 1 260px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: box-shadow 0.18s, transform 0.18s;
+            font-size: 1.3rem;
+        }
+        .case-card:hover {
+            box-shadow: 0 16px 48px rgba(37,99,235,0.16);
+            transform: translateY(-3px) scale(1.01);
+        }
+        .case-card h3 {
+            margin: 0;
+            color: #2563eb;
+            font-size: 1.5rem;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+        }
+        .error-message {
+            color: #dc2626;
+            margin-top: 8px;
+        }
+        .success-message {
+            color: #16a34a;
+            margin-top: 8px;
+        }
+    </style>
+</head>
+<body>
+        <nav class="navbar">
+            <div class="logo">⚖ Legal System</div>
+            <ul class="nav-links">
+                <li><a href="admin-dashboard.html" class="active">Dashboard</a></li>
+                <li><a href="#" id="logoutBtn" class="btn primary" style="margin-left:8px;">Logout</a></li>
+            </ul>
+        </nav>
+        <script>
+            document.addEventListener('DOMContentLoaded', setupLogoutButton);
+        </script>
+    <div class="admin-cases-container">
+        <div class="admin-cases-header">
+            <h1>Case Types</h1>
+            <form class="add-case-form" id="addCaseForm">
+                <input type="text" id="caseNameInput" placeholder="Case Name" required />
+                <input type="text" id="caseDescInput" placeholder="Description" required />
+                <button type="submit">Add Case</button>
+            </form>
+        </div>
+        <div id="formMessage"></div>
+        <div class="case-cards" id="caseCards"></div>
+    </div>
+    <script>
+        async function fetchCaseTypes() {
+            try {
+                // Use full backend URL if needed (adjust if your backend runs elsewhere)
+                const res = await fetch('http://127.0.0.1:5000/case-types');
+                if (!res.ok) {
+                    throw new Error('Failed to fetch case types');
+                }
+                const data = await res.json();
+                if (data.success) {
+                    renderCaseCards(data.data);
+                } else {
+                    document.getElementById('formMessage').textContent = data.message || 'Failed to load case types.';
+                }
+            } catch (err) {
+                document.getElementById('formMessage').textContent = 'Error: ' + err.message;
+            }
+        }
+        function renderCaseCards(cases) {
+            const container = document.getElementById('caseCards');
+            container.innerHTML = '';
+            cases.forEach(c => {
+                const card = document.createElement('div');
+                card.className = 'case-card';
+                card.innerHTML = `<h3>${c.case_name}</h3>`;
+                container.appendChild(card);
+            });
+        }
+        document.getElementById('addCaseForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const name = document.getElementById('caseNameInput').value.trim();
+            const desc = document.getElementById('caseDescInput').value.trim();
+            const msgDiv = document.getElementById('formMessage');
+            msgDiv.textContent = '';
+            const btn = this.querySelector('button');
+            btn.disabled = true;
+            try {
+                const res = await fetch('http://127.0.0.1:5000/case-types', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ case_name: name, description: desc })
+                });
+                if (!res.ok) {
+                    throw new Error('Failed to add case type');
+                }
+                const data = await res.json();
+                if (data.success) {
+                    msgDiv.textContent = data.message;
+                    msgDiv.className = 'success-message';
+                    this.reset();
+                    fetchCaseTypes();
+                } else {
+                    msgDiv.textContent = data.message || 'Error adding case type';
+                    msgDiv.className = 'error-message';
+                }
+            } catch (err) {
+                msgDiv.textContent = 'Error: ' + err.message;
+                msgDiv.className = 'error-message';
+            }
+            btn.disabled = false;
+        });
+        fetchCaseTypes();
+    </script>
+</body>
+</html>

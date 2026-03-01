@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+            <script src="auth.js"></script>
+        <script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
+    <meta charset="UTF-8">
+    <title>Lawyer Dashboard - Lexie Gneie</title>
+    <link rel="stylesheet" href="index.css">
+    <style>
+        .tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 18px;
+            justify-content: center;
+        }
+        .tab-btn {
+            padding: 8px 22px;
+            border: none;
+            border-radius: 6px 6px 0 0;
+            background: #f3f6fa;
+            color: #2563eb;
+            font-weight: 600;
+            font-size: 16px;
+            cursor: pointer;
+            outline: none;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.03);
+            transition: background 0.2s, color 0.2s;
+        }
+        .tab-btn.active, .tab-btn:focus {
+            background: #2563eb;
+            color: #fff;
+            box-shadow: 0 2px 8px rgba(37,99,235,0.08);
+        }
+        .tab-btn:hover:not(.active) {
+            background: #e0e7ff;
+            color: #1e40af;
+        }
+        .chat-sidebar {
+            position: fixed;
+            top: 0;
+            right: -350px;
+            width: 350px;
+            height: 100%;
+            background: #fff;
+            box-shadow: -2px 0 12px rgba(37,99,235,0.12);
+            z-index: 1000;
+            transition: right 0.3s;
+            overflow: auto;
+            display: block;
+        }
+        .chat-sidebar.open {
+            right: 0;
+            display: block;
+        }
+    </style>
+</head>
+<body>
+            <script>authCheck({ requiredRole: 'lawyer' });</script>
+        <!-- Sidebar Chat Panel -->
+        <div id="chatSidebar" class="chat-sidebar" style="display:none;position:fixed;top:0;right:0;width:350px;height:100%;background:#fff;box-shadow:-2px 0 12px rgba(37,99,235,0.12);z-index:1000;transition:right 0.3s;overflow:auto;">
+            <div style="padding:16px;border-bottom:1px solid #e0e7ff;background:#2563eb;color:#fff;font-weight:600;font-size:18px;display:flex;justify-content:space-between;align-items:center;">
+                <span id="chatSidebarTitle">Conversation</span>
+                <button id="closeChatSidebar" style="background:none;border:none;color:#fff;font-size:22px;cursor:pointer;">&times;</button>
+            </div>
+            <div id="chatSidebarContent" style="padding:16px;"></div>
+            <div id="chatInputArea" style="padding:12px 16px 16px 16px; border-top:1px solid #e0e7ff; display:none;">
+                <textarea id="chatMessageInput" rows="2" style="width:100%;resize:none;box-sizing:border-box;" placeholder="Type your message..."></textarea>
+                <button id="sendChatMessageBtn" class="btn primary" style="margin-top:8px;float:right;">Send</button>
+            </div>
+        </div>
+    <nav class="navbar">
+        <div class="logo" style="display:flex;align-items:center;justify-content:space-between;width:100%;">
+            <span>⚖ Legal System</span>
+            <div style="display:flex;align-items:center;gap:16px;">
+                <a href="lawyer-chatbot-query.html" title="Ask AI Chatbot" style="display:inline-block;vertical-align:middle;">
+                    <svg id="aiChatbotLogo" width="38" height="38" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" style="cursor:pointer;">
+                        <circle cx="32" cy="32" r="32" fill="#2563eb"/>
+                        <ellipse cx="32" cy="38" rx="18" ry="10" fill="#fff"/>
+                        <ellipse cx="32" cy="28" rx="12" ry="8" fill="#fff"/>
+                        <circle cx="26" cy="28" r="2" fill="#2563eb"/>
+                        <circle cx="38" cy="28" r="2" fill="#2563eb"/>
+                        <rect x="28" y="34" width="8" height="2" rx="1" fill="#2563eb"/>
+                    </svg>
+                </a>
+                <button id="logoutBtn" class="btn primary" style="margin-left:8px;">Logout</button>
+            </div>
+        </div>
+    </nav>
+    <main class="site-main">
+        <section class="dashboard simple-dashboard">
+            <header class="dash-header">
+                <div>
+                    <h1 id="greeting">Welcome, <span id="lawyerName">Lawyer</span></h1>
+                    <div id="lawyerExpertise" style="color:#2563eb;font-weight:600;margin-top:4px;"></div>
+                </div>
+                <div class="dash-controls">
+                    <!-- Removed Sign out button, logout is now in navbar -->
+                </div>
+            </header>
+            <h2 class="section-heading">Requests</h2>
+            <div class="tabs">
+                <button class="tab-btn active" data-tab="pending">Pending</button>
+                <button class="tab-btn" data-tab="accepted">Accepted</button>
+                <button class="tab-btn" data-tab="rejected">Rejected</button>
+            </div>
+            <div class="case-canvas">
+                <div id="pendingRequests" class="case-types-list tab-content" aria-live="polite"></div>
+                <div id="acceptedRequests" class="case-types-list tab-content" style="display:none" aria-live="polite"></div>
+                <div id="rejectedRequests" class="case-types-list tab-content" style="display:none" aria-live="polite"></div>
+            </div>
+            <!-- Approved Requests section removed as per request -->
+        </section>
+    </main>
+    <footer class="site-footer">
+        <div class="footer-inner">
+            <div>© <span id="year-lawyer-dash"></span> Lexie Gneie</div>
+            <div class="footer-links">
+                <a href="#">Privacy</a>
+                <a href="#">Terms</a>
+            </div>
+        </div>
+    </footer>
+    <script>
+    document.getElementById('year-lawyer-dash').textContent = new Date().getFullYear();
+    setupLogoutButton();
+    // Get lawyer name from URL or localStorage
+    let lawyerName = (new URLSearchParams(window.location.search).get('name') || '').trim();
+    if (!lawyerName) {
+        lawyerName = localStorage.getItem('lg_lawyer_name') || '';
+    }
+    if (!lawyerName) {
+        document.body.innerHTML = '<div style="color:#d32f2f;text-align:center;margin-top:48px;font-size:22px;">Lawyer name not found. Please log in again.</div>';
+    } else {
+        document.getElementById('lawyerName').textContent = lawyerName;
+        // Only load requests for this lawyer
+        async function loadLawyerRequests() {
+            if (!lawyerName) return;
+            try {
+                const res = await fetch(`http://127.0.0.1:5000/lawyer-requests-by-name?name=${encodeURIComponent(lawyerName)}`);
+                if (res.ok) {
+                    const json = await res.json();
+                    if (json.success && Array.isArray(json.data)) {
+                        const pending = json.data.filter(r => (r.status||'') === 'Pending');
+                        const accepted = json.data.filter(r => (r.status||'') === 'Accepted');
+                        const rejected = json.data.filter(r => (r.status||'') === 'Rejected');
+                        // Approved requests section removed; no need to filter for approved
+                        document.getElementById('pendingRequests').innerHTML = pending.length ? pending.map(r => `
+                            <div class="request-card" data-id="${r.id}">
+                                <div class="request-id"><strong>ID:</strong> ${r.id}</div>
+                                <div class="request-type">${r.case_type_name}</div>
+                                <div class="request-status">Status: <span>${r.status}</span></div>
+                                <div class="request-client">Client: ${r.client_name}</div>
+                                <div class="request-desc"><strong>Details:</strong> ${r.description}</div>
+                                <div class="request-actions" style="margin-top:12px;display:flex;gap:10px;">
+                                    <button class="btn primary accept-btn" data-id="${r.id}">Accept</button>
+                                    <button class="btn ghost reject-btn" data-id="${r.id}">Reject</button>
+                                </div>
+                            </div>
+                        `).join('') : '<div class="empty">No pending requests</div>';
+
+                        document.getElementById('acceptedRequests').innerHTML = accepted.length ? accepted.map(r => `
+                            <div class="request-card improved-lawyer-card" data-id="${r.id}">
+                                <div class="request-type" style="font-size:1.15em;font-weight:700;color:#2563eb;margin-bottom:6px;">${r.case_type_name}</div>
+                                <div class="request-status" style="font-size:0.98em;color:#475569;margin-bottom:2px;">Status: <span style="font-weight:700;color:#1e40af;">${r.status}</span></div>
+                                <div class="request-client" style="font-size:0.98em;margin-bottom:2px;"><strong>Client:</strong> ${r.client_name}</div>
+                                <div class="request-desc" style="font-size:0.97em;color:#334155;margin-bottom:8px;"><strong>Details:</strong> ${r.description}</div>
+                                <div class="request-actions" style="margin-top:10px;display:flex;gap:10px;">
+                                    <button class="btn primary conversation-btn" data-id="${r.id}" data-lawyer="${lawyerName}" data-client="${r.client_name}">Conversation</button>
+                                </div>
+                            </div>
+                        `).join('') : '<div class="empty">No accepted requests</div>';
+                        // Add event listeners for Conversation buttons
+                        document.querySelectorAll('.conversation-btn').forEach(btn => {
+                            btn.addEventListener('click', async function() {
+                                const requestId = parseInt(this.getAttribute('data-id'), 10);
+                                const lawyerName = this.getAttribute('data-lawyer');
+                                const clientName = this.getAttribute('data-client');
+                                // Find the request object for lawyer_id and client_id
+                                const reqObj = accepted.find(r => r.id == requestId);
+                                const lawyerId = reqObj && reqObj.lawyer_id ? reqObj.lawyer_id : null;
+                                const clientId = reqObj && reqObj.client_id ? reqObj.client_id : null;
+                                // Open sidebar chat panel
+                                const sidebar = document.getElementById('chatSidebar');
+                                const content = document.getElementById('chatSidebarContent');
+                                const title = document.getElementById('chatSidebarTitle');
+                                let inputArea = document.getElementById('chatInputArea');
+                                sidebar.style.display = 'block';
+                                if (!inputArea) {
+                                    // If not present, create it
+                                    inputArea = document.createElement('div');
+                                    inputArea.id = 'chatInputArea';
+                                    inputArea.style = 'padding:12px 16px 16px 16px; border-top:1px solid #e0e7ff;';
+                                    inputArea.innerHTML = `<textarea id="chatMessageInput" rows="2" style="width:100%;resize:none;box-sizing:border-box;" placeholder="Type your message..."></textarea><button id="sendChatMessageBtn" class="btn primary" style="margin-top:8px;float:right;">Send</button>`;
+                                    sidebar.appendChild(inputArea);
+                                }
+                                inputArea.style.display = '';
+                                sidebar.classList.add('open');
+                                title.textContent = `Conversation - ${clientName}`;
+                                content.innerHTML = `<div><strong>Request ID:</strong> ${requestId}</div><div><strong>Lawyer:</strong> ${lawyerName}</div><div><strong>Client:</strong> ${clientName}</div><hr><div id='chatMessagesArea' style='margin-top:12px;max-height:350px;overflow-y:auto;'></div>`;
+                                                                                                content.innerHTML = `<div style="margin-bottom:10px;">
+                                                                                                    <strong>Case:</strong> ${reqObj && reqObj.case_type_name ? reqObj.case_type_name : ''}
+                                                                                                </div>
+                                                                                                <hr>
+                                                                                                <div id='chatMessagesArea' style='margin-top:12px;max-height:350px;overflow-y:auto;'></div>`;
+                                                                                                // Always wire up close button for sidebar
+                                                                                                const closeBtn = document.getElementById('closeChatSidebar');
+                                                                                                if (closeBtn) {
+                                                                                                        closeBtn.onclick = function() {
+                                                                                                                sidebar.classList.remove('open');
+                                                                                                                sidebar.style.display = 'none';
+                                                                                                                document.getElementById('chatMessagesArea').innerHTML = '';
+                                                                                                        };
+                                                                                                }
+                                const chatArea = document.getElementById('chatMessagesArea');
+                                // Load old messages once
+                                async function loadOldMessages() {
+                                    try {
+                                        const resp = await fetch(`http://127.0.0.1:5000/get-messages/${requestId}`);
+                                        const data = await resp.json();
+                                        if (data.success && Array.isArray(data.messages)) {
+                                            chatArea.innerHTML = data.messages.map(msg => {
+                                                const isLawyer = msg.sender_type === 'lawyer';
+                                                const align = isLawyer ? 'right' : 'left';
+                                                const bubbleColor = isLawyer ? '#2563eb' : '#e0e7ff';
+                                                const color = isLawyer ? '#fff' : '#222';
+                                                return `
+                                                    <div style='margin-bottom:10px;text-align:${align};'>
+                                                        <span style='background:${bubbleColor};color:${color};padding:6px 12px;border-radius:12px;display:inline-block;'>${msg.message}</span>
+                                                        <div style='font-size:11px;color:#888;margin-top:2px;'>${msg.timestamp}</div>
+                                                    </div>
+                                                `;
+                                            }).join('');
+                                            chatArea.scrollTop = chatArea.scrollHeight;
+                                        }
+                                    } catch (e) {}
+                                }
+                                loadOldMessages();
+                                // Socket.IO setup
+                                const socket = io("http://127.0.0.1:5000");
+                                socket.emit("join", { request_id: requestId });
+                                socket.on("new_message", function(data) {
+                                    const messageDiv = document.createElement("div");
+                                    const isLawyer = data.sender_type === 'lawyer';
+                                    const align = isLawyer ? 'right' : 'left';
+                                    const bubbleColor = isLawyer ? '#2563eb' : '#e0e7ff';
+                                    const color = isLawyer ? '#fff' : '#222';
+                                    messageDiv.style.marginBottom = '10px';
+                                    messageDiv.style.textAlign = align;
+                                    messageDiv.innerHTML = `
+                                        <span style='background:${bubbleColor};color:${color};padding:6px 12px;border-radius:12px;display:inline-block;'>${data.message}</span>
+                                        <div style='font-size:11px;color:#888;margin-top:2px;'>${data.timestamp || ''}</div>
+                                    `;
+                                    chatArea.appendChild(messageDiv);
+                                    chatArea.scrollTop = chatArea.scrollHeight;
+                                });
+                                // Attach send handler
+                                const sendBtn = document.getElementById('sendChatMessageBtn');
+                                sendBtn.onclick = async function() {
+                                    const msg = document.getElementById('chatMessageInput').value.trim();
+                                    if (!msg) return;
+                                    const payload = {
+                                        request_id: requestId,
+                                        sender_type: 'lawyer',
+                                        sender_name: lawyerName,
+                                        message: msg
+                                    };
+                                    try {
+                                        const resp = await fetch('http://127.0.0.1:5000/send-message', {
+                                            method: 'POST',
+                                            headers: { 'Content-Type': 'application/json' },
+                                            body: JSON.stringify(payload)
+                                        });
+                                        const result = await resp.json();
+                                        // Only show error if truly failed and no socket message is broadcasted
+                                        if (result.success) {
+                                            document.getElementById('chatMessageInput').value = '';
+                                        } else if (result.message && result.message.toLowerCase().includes('error')) {
+                                            alert(result.message || 'Failed to send message.');
+                                        }
+                                    } catch (e) {
+                                        alert('Error sending message.');
+                                    }
+                                };
+                            });
+                            // Sidebar close button handler
+                            document.addEventListener('DOMContentLoaded', function() {
+                                const sidebar = document.getElementById('chatSidebar');
+                                const closeBtn = document.getElementById('closeChatSidebar');
+                                if (closeBtn) {
+                                    closeBtn.addEventListener('click', function() {
+                                        sidebar.classList.remove('open');
+                                        if (window.chatReloadInterval) clearInterval(window.chatReloadInterval);
+                                        // Reset chat area and lastMessageId
+                                        document.getElementById('chatMessagesArea').innerHTML = '';
+                                        lastMessageId = 0;
+                                        isInitialLoad = true;
+                                    });
+                                }
+                            });
+                        });
+
+                        document.getElementById('rejectedRequests').innerHTML = rejected.length ? rejected.map(r => `
+                            <div class="request-card improved-lawyer-card" style="padding:28px 22px 22px 22px;min-width:320px;max-width:420px;margin:12px auto;box-shadow:0 8px 32px rgba(220,38,38,0.10);border-radius:18px;background:#f8fafc;">
+                                <div class="request-type" style="font-size:1.25em;font-weight:800;color:#dc2626;margin-bottom:8px;">${r.case_type_name}</div>
+                                <div class="request-status" style="font-size:1.05em;color:#475569;margin-bottom:2px;">Status: <span style="font-weight:700;color:#dc2626;">${r.status}</span></div>
+                                <div class="request-client" style="font-size:1em;margin-bottom:2px;"><strong>Client:</strong> ${r.client_name}</div>
+                                <div class="request-desc" style="font-size:0.99em;color:#334155;margin-bottom:8px;"><strong>Details:</strong> ${r.description}</div>
+                            </div>
+                        `).join('') : '<div class="empty">No rejected requests</div>';
+
+                        document.querySelectorAll('.accept-btn').forEach(btn => {
+                            btn.addEventListener('click', async function() {
+                                const requestId = parseInt(this.getAttribute('data-id'), 10);
+                                console.log('Accept button clicked, data-id:', requestId);
+                                let lawyerName = localStorage.getItem('lawyerName');
+                                if (!lawyerName) {
+                                    lawyerName = document.getElementById('lawyerName').textContent.trim();
+                                    localStorage.setItem('lawyerName', lawyerName);
+                                }
+                                if (!requestId) {
+                                    alert('Request ID is missing.');
+                                    return;
+                                }
+                                const ansStatus = 'accepted'; // lowercase for backend
+                                const payload = {
+                                    request_id: requestId,
+                                    lawyer_name: lawyerName,
+                                    status: ansStatus
+                                };
+                                console.log('Payload:', payload);
+                                const response = await fetch('http://127.0.0.1:5000/update-request-status', {
+                                    method: 'PUT',
+                                    headers: {
+                                        'Content-Type': 'application/json'
+                                    },
+                                    body: JSON.stringify(payload)
+                                });
+                                if (!response.ok) {
+                                    alert('Failed to update request status.');
+                                }
+                                loadLawyerRequests();
+                            });
+                        });
+                        document.querySelectorAll('.reject-btn').forEach(btn => {
+                            btn.addEventListener('click', async function() {
+                                const requestId = parseInt(this.getAttribute('data-id'), 10);
+                                console.log('Reject button clicked, data-id:', requestId);
+                                let lawyerName = localStorage.getItem('lawyerName');
+                                if (!lawyerName) {
+                                    lawyerName = document.getElementById('lawyerName').textContent.trim();
+                                    localStorage.setItem('lawyerName', lawyerName);
+                                }
+                                if (!requestId) {
+                                    alert('Request ID is missing.');
+                                    return;
+                                }
+                                const ansStatus = 'rejected'; // lowercase for backend
+                                const payload = {
+                                    request_id: requestId,
+                                    lawyer_name: lawyerName,
+                                    status: ansStatus
+                                };
+                                console.log('Payload:', payload);
+                                const response = await fetch('http://127.0.0.1:5000/update-request-status', {
+                                    method: 'PUT',
+                                    headers: {
+                                        'Content-Type': 'application/json'
+                                    },
+                                    body: JSON.stringify(payload)
+                                });
+                                if (!response.ok) {
+                                    alert('Failed to update request status.');
+                                }
+                                loadLawyerRequests();
+                            });
+                        });
+
+                        // No rendering for approved requests; section removed
+                    } else {
+                        document.getElementById('pendingRequests').innerHTML = '<div class="empty">No requests found</div>';
+                        document.getElementById('acceptedRequests').innerHTML = '<div class="empty">No requests found</div>';
+                        document.getElementById('rejectedRequests').innerHTML = '<div class="empty">No requests found</div>';
+                    }
+                }
+            } catch (e) {
+                document.getElementById('pendingRequests').innerHTML = '<div class="empty">Error loading data</div>';
+                document.getElementById('acceptedRequests').innerHTML = '<div class="empty">Error loading data</div>';
+                document.getElementById('rejectedRequests').innerHTML = '<div class="empty">Error loading data</div>';
+            }
+        }
+        loadLawyerRequests();
+    }
+    function setupTabs() {
+        const tabBtns = document.querySelectorAll('.tab-btn');
+        const tabContents = {
+            pending: document.getElementById('pendingRequests'),
+            accepted: document.getElementById('acceptedRequests'),
+            rejected: document.getElementById('rejectedRequests')
+        };
+        tabBtns.forEach(btn => {
+            btn.addEventListener('click', function() {
+                tabBtns.forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                Object.keys(tabContents).forEach(key => {
+                    tabContents[key].style.display = 'none';
+                });
+                tabContents[this.dataset.tab].style.display = '';
+            });
+        });
+    }
+    setupTabs();
+    </script>
+</body>
+</html>

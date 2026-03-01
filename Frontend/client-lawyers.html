@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+        <script src="auth.js"></script>
+    <meta charset="utf-8">
+    <title>Available Lawyers - Lexie Gneie</title>
+    <link rel="stylesheet" href="index.css">
+</head>
+<body>
+    <script>authCheck({ requiredRole: 'client' }); setupLogoutButton();</script>
+    <nav class="navbar">
+        <div class="logo">⚖ Legal System</div>
+        <ul class="nav-links">
+            <li><a href="index.html">Home</a></li>
+            <li><a href="client-dashboard.html">Dashboard</a></li>
+            <li><a href="client-lawyers.html" class="active">Lawyers</a></li>
+            <li><a href="#" id="logoutBtn">Logout</a></li>
+        </ul>
+    </nav>
+
+    <main class="site-main">
+        <section class="lawyers-container">
+            <header class="dash-header">
+                <div>
+                    <h1 id="pageTitle">Lawyers</h1>
+                </div>
+            </header>
+
+            <div id="lawyersGrid" class="lawyers-grid" aria-live="polite">
+                <!-- Lawyer cards rendered here -->
+            </div>
+        </section>
+    </main>
+
+    <footer class="site-footer">
+        <div class="footer-inner">
+            <div>© <span id="year-lawyers"></span> Lexie Gneie</div>
+            <div class="footer-links">
+                <a href="#">Privacy</a>
+                <a href="#">Terms</a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+    document.getElementById('year-lawyers').textContent = new Date().getFullYear();
+
+    function qs(name) {
+        const params = new URLSearchParams(window.location.search);
+        return params.get(name);
+    }
+
+    const typeId = qs('type');
+    const storedCase = JSON.parse(localStorage.getItem('lg_caseType')||'{}');
+    const typeName = qs('name') || storedCase.name || '';
+    if (typeName) {
+        document.getElementById('pageTitle').textContent = `${typeName} Lawyers`;
+    }
+
+    const grid = document.getElementById('lawyersGrid');
+
+    // Modal overlay for custom description input
+    let modal = document.getElementById('descModal');
+    if (!modal) {
+        modal = document.createElement('div');
+        modal.id = 'descModal';
+        modal.style.position = 'fixed';
+        modal.style.top = '0';
+        modal.style.left = '0';
+        modal.style.width = '100vw';
+        modal.style.height = '100vh';
+        modal.style.background = 'rgba(30,58,138,0.18)';
+        modal.style.display = 'none';
+        modal.style.zIndex = '9999';
+        modal.innerHTML = `
+            <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);background:#fff;padding:32px 24px;border-radius:12px;box-shadow:0 8px 32px rgba(16,24,40,0.12);max-width:400px;width:90%;">
+                <h3 style="margin-bottom:12px;color:#1e3a8a;">Request Consultation</h3>
+                <label for="descInput" style="font-weight:600;color:#475569;">Enter a brief description:</label>
+                <textarea id="descInput" rows="4" style="width:100%;margin:10px 0 18px 0;padding:8px;border-radius:8px;border:1px solid #e6eefb;resize:vertical;"></textarea>
+                <div style="display:flex;gap:12px;justify-content:flex-end;">
+                    <button id="descCancel" style="background:#64748b;color:#fff;border:none;padding:8px 16px;border-radius:8px;font-weight:600;">Cancel</button>
+                    <button id="descSubmit" style="background:#1e3a8a;color:#fff;border:none;padding:8px 16px;border-radius:8px;font-weight:600;">Submit</button>
+                </div>
+            </div>
+        `;
+        document.body.appendChild(modal);
+    }
+
+    async function loadLawyers() {
+        let lawyers = [
+            { id: 101, name: 'Aisha Khan', specialty: 'Family Law', location: 'Lahore' },
+            { id: 102, name: 'Omar Ali', specialty: 'Criminal Law', location: 'Karachi' },
+            { id: 103, name: 'Sara Ahmed', specialty: 'Property Law', location: 'Islamabad' }
+        ];
+
+        try {
+            // Backend expects `case_type_name` param at /lawyers-by-case-name
+            let url = 'http://127.0.0.1:5000/lawyers-by-case-name';
+            const nameForQuery = typeName || (storedCase && storedCase.name) || '';
+            if (nameForQuery) {
+                url += `?case_type_name=${encodeURIComponent(nameForQuery)}`;
+            }
+            const res = await fetch(url);
+            if (res.ok) {
+                const json = await res.json();
+                if (Array.isArray(json)) lawyers = json;
+                else if (json && Array.isArray(json.data)) lawyers = json.data;
+                else if (json && Array.isArray(json.lawyers)) lawyers = json.lawyers;
+                else {
+                    const arr = Object.values(json || {}).find(v => Array.isArray(v));
+                    if (arr) lawyers = arr;
+                }
+            }
+        } catch(e) { /* fallback sample used */ }
+
+        if (!Array.isArray(lawyers) || lawyers.length === 0) {
+            grid.innerHTML = '<div class="empty">No lawyers available for this case type.</div>';
+            return;
+        }
+
+        grid.innerHTML = lawyers.map(l => {
+            const displayName = (l.name||l.fullName||l.displayName||'Unknown');
+            const specialty = (l.specialty||l.speciality||l.expertise||'');
+            const location = (l.location||l.city||'');
+            // Prefer the selected case type name (from query or localStorage), then any API-provided case type; avoid falling back to 'General'
+            const metaParts = [];
+            if (specialty) metaParts.push(specialty);
+            if (location) metaParts.push(location);
+            const meta = metaParts.join(' • ');
+            return `
+            <div class="lawyer-card">
+                <h3>${displayName}</h3>
+                ${meta ? `<div class="lawyer-meta">${meta}</div>` : ''}
+                <div class="lawyer-actions">
+                    <a class="btn primary" href="#" data-id="${l.id}">Request Consultation</a>
+                </div>
+            </div>
+        `;
+        }).join('');
+
+        grid.querySelectorAll('.lawyer-actions .btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.preventDefault();
+                const lawyerId = btn.dataset.id;
+                const displayName = btn.closest('.lawyer-card').querySelector('h3').textContent.trim();
+                const clientName = localStorage.getItem('lg_username');
+                const caseTypeName = typeName || (storedCase && storedCase.name) || '';
+                modal.style.display = 'block';
+                document.getElementById('descInput').value = '';
+                document.getElementById('descInput').focus();
+
+                // Cancel button
+                document.getElementById('descCancel').onclick = () => {
+                    modal.style.display = 'none';
+                };
+                // Submit button
+                document.getElementById('descSubmit').onclick = async () => {
+                    const description = document.getElementById('descInput').value.trim();
+                    if (!clientName || !displayName || !caseTypeName || !description) {
+                        alert('All fields are required.');
+                        return;
+                    }
+                    try {
+                        const res = await fetch('http://127.0.0.1:5000/client-request', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                                client_name: clientName,
+                                lawyer_name: displayName,
+                                case_type_name: caseTypeName,
+                                description: description
+                            })
+                        });
+                        const json = await res.json();
+                        if (res.ok && json.success) {
+                            modal.style.display = 'none';
+                            // Show custom success overlay
+                            let successModal = document.getElementById('successModal');
+                            if (!successModal) {
+                                successModal = document.createElement('div');
+                                successModal.id = 'successModal';
+                                successModal.style.position = 'fixed';
+                                successModal.style.top = '0';
+                                successModal.style.left = '0';
+                                successModal.style.width = '100vw';
+                                successModal.style.height = '100vh';
+                                successModal.style.background = 'rgba(30,58,138,0.18)';
+                                successModal.style.display = 'none';
+                                successModal.style.zIndex = '9999';
+                                successModal.innerHTML = `
+                                    <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);background:#fff;padding:32px 24px;border-radius:12px;box-shadow:0 8px 32px rgba(16,24,40,0.12);max-width:400px;width:90%;text-align:center;">
+                                        <h3 style="color:#1e3a8a;margin-bottom:16px;">Request Submitted!</h3>
+                                        <p style="color:#475569;font-size:16px;margin-bottom:18px;">Your consultation request has been sent to the lawyer. You can track its status in your dashboard.</p>
+                                        <button id="successOk" style="background:#1e3a8a;color:#fff;border:none;padding:8px 24px;border-radius:8px;font-weight:600;">Go to Dashboard</button>
+                                    </div>
+                                `;
+                                document.body.appendChild(successModal);
+                            }
+                            successModal.style.display = 'block';
+                            document.getElementById('successOk').onclick = () => {
+                                successModal.style.display = 'none';
+                                window.location.href = 'client-dashboard.html';
+                            };
+                        } else {
+                            alert(json.message || 'Failed to submit request.');
+                        }
+                    } catch (err) {
+                        alert('Error submitting request.');
+                    }
+                };
+            });
+        });
+    }
+    loadLawyers();
+    </script>
+</body>
+</html>

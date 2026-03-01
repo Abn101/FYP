@@ -1,0 +1,116 @@
+{
+  "case_number": "Criminal Petitions No.176-K to 179-K of 2022 and 1493 of 2022",
+  "court": "Supreme Court of Pakistan",
+  "judges": [
+    "Muhammad Hashim Khan Kakar",
+    "Salahuddin Panhwar",
+    "Ishtiaq Ibrahim"
+  ],
+  "parties": {
+    "appellant": [
+      { "name": "Muhammad Daniyal", "father_name": "Not mentioned" },
+      { "name": "Bilal Rasheed", "father_name": "Not mentioned" }
+    ],
+    "respondent": "The State",
+    "complainant": "Ishtiaq Ahmed"
+  },
+  "case_type": "Criminal Petition / Murder / Culpable Homicide",
+  "related_cases": [
+    "Crime No.16 of 2018 (PS Darakshan, Karachi)",
+    "High Court of Sindh Judgment dated 14-10-2022",
+    "Special Criminal A.T. Appeals No.168, 169, 170, 171 and 173 of 2021"
+  ],
+  "decision_date": "24-11-2025",
+  "facts": {
+    "incident_date": "13-01-2018",
+    "incident_time": "Approximately 7:15 PM",
+    "location": "Lane-5 near Castle Lights, Bukhari Commercial, Phase-V, DHA Karachi",
+    "victim": { "name": "Intezar Ahmed", "age": "19 years" },
+    "summary": "Police officials opened fire at the vehicle of Intezar Ahmed during patrol duty after he allegedly failed to stop. The firing resulted in his death. The prosecution alleged intentional murder, while the defence claimed the act occurred during discharge of official duty without ill will."
+  },
+  "investigation": {
+    "FIR_no": "Crime No.16/2018",
+    "police_station": "Darakshan, Karachi",
+    "investigating_officer": "Muhammad Ashraf Jogi, SI",
+    "arrests": [
+      { "name": "Muhammad Daniyal", "date": "15-01-2018 (Surrendered)" },
+      { "name": "Bilal Rasheed", "date": "15-01-2018 (Surrendered)" }
+    ],
+    "evidence_collected": {
+      "firearms": [
+        { "type": "Official pistol (AVCC)", "recovered_from": "Bilal Rasheed" },
+        { "type": "Official pistol (ACLC)", "recovered_from": "Muhammad Daniyal" }
+      ],
+      "crime_empties": [
+        { "matched_with": "Bilal Rasheed", "quantity": 12 },
+        { "matched_with": "Muhammad Daniyal", "quantity": 6 }
+      ],
+      "other_items": [
+        "Toyota Corolla Grande BLE-254",
+        "CCTV footage with DVR",
+        "Call Data Records (CDRs)",
+        "Sealed parcel of deceased’s clothes"
+      ]
+    },
+    "forensic_reports": [
+      "FSL ballistic report confirming empties matched with pistols of Muhammad Daniyal and Bilal Rasheed"
+    ],
+    "medical_evidence": {
+      "post_mortem_by": "Dr. Abdul Ghaffar",
+      "total_injuries": "Firearm injuries",
+      "entry_wounds_with_blackening": "Not specified"
+    }
+  },
+  "legal_issues": [
+    {
+      "issue": "Applicability of rigorous evaluative standards",
+      "finding": "When accused are police officials and investigation is conducted by same force, strict standards may not apply due to possibility of deliberate concessions."
+    },
+    {
+      "issue": "Adoption of third view",
+      "finding": "Court adopted third view that petitioners fired in purported discharge of duty but exceeded authority."
+    },
+    {
+      "issue": "Conversion from Section 302(b) to 302(c) PPC",
+      "finding": "Petitioners exceeded powers in good faith without ill will; case falls under Exception 3 to old Section 300 PPC; conviction altered to Section 302(c) PPC."
+    },
+    {
+      "issue": "Acquittal of co-accused",
+      "finding": "No sufficient grounds to interfere with acquittal recorded by High Court."
+    }
+  ],
+  "arguments": {
+    "appellant": [
+      "Firing occurred during official duty.",
+      "No premeditation or ill will.",
+      "Motive not proven.",
+      "Exception 3 to Section 300 PPC applicable."
+    ],
+    "respondent": [
+      "FSL report conclusively connects weapons to crime empties.",
+      "Intentional firing resulted in death.",
+      "Conviction under Section 302(b) PPC justified."
+    ]
+  },
+  "counsel": {
+    "appellant": [
+      "Irshad Ahmed, ASC",
+      "Muhammad Akhtar Qureshi, ASC"
+    ],
+    "complainant": [
+      "Faisal Siddiqi, ASC"
+    ],
+    "state": [
+      "Khadim Hussain, APG Sindh"
+    ]
+  },
+  "judgment_summary": {
+    "Criminal Petitions No.176-K to 179-K of 2022": "Converted into appeal; conviction under Section 302(b) PPC converted to Section 302(c) PPC; sentence reduced to 15 years imprisonment; remaining convictions maintained; benefit of Section 382-B Cr.P.C extended",
+    "Criminal Petition No.1493 of 2022": "Dismissed; acquittal of co-accused maintained"
+  },
+  "legal_references": [
+    { "case_name": "Syed Ali Bepari v. Nibaran Mollah and others", "citation": "PLD 1962 SC 502" },
+    { "case_name": "Ali Muhammad v. Ali Muhammad and another", "citation": "PLD 1996 Supreme Court 274" }
+  ],
+  "remarks": "Supreme Court held that petitioners, as public servants, exceeded authority in good faith without ill will. Conviction altered to Section 302(c) PPC and sentence reduced to 15 years imprisonment."
+}

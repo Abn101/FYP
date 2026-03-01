@@ -1,0 +1,124 @@
+{
+  "case_number": "Crl. Appeal No.82474-J/2022 / Murder Reference No.331/2022 / P.S.L.A. No.82858/2022",
+  "citation": "2026 LHC 975",
+  "court": "Lahore High Court",
+  "judges": ["Ali Zia Bajwa", "Farooq Haider"],
+  "parties": {
+    "appellant": [
+      {"name": "Muhammad Nadeem Khan", "father_name": "Jaffar Khan"}
+    ],
+    "respondent": "The State",
+    "complainant": "Shah Baig",
+    "co_accused": ["Ansar", "Akram", "Badar Nawaz", "Allah Ditta"]
+  },
+  "case_type": "Criminal Appeal / Murder Reference / Private Complaint / PSLA",
+  "trial_court": {
+    "court_name": "Additional Sessions Judge, Toba Tek Singh",
+    "judgment_date": "30-11-2022",
+    "conviction_section": "302(b) PPC",
+    "sentence": "Death as Ta'zir with Rs.300,000 compensation under Section 544-A Cr.P.C."
+  },
+  "decision_date": "21-01-2026",
+  "facts": {
+    "incident_date": "10-05-2021",
+    "incident_time": "06:00 p.m.",
+    "location": "Killa No.11, Square No.61, Chak No.188/GB, District Toba Tek Singh",
+    "deceased": {"name": "Imran", "relation": "Son of complainant"},
+    "summary": "The appellant along with co-accused allegedly fired multiple shots at Imran due to previous enmity related to a 2015 murder case. FIR No.412/2021 was registered at Police Station Rajana. The trial court convicted the appellant while acquitting co-accused."
+  },
+  "investigation": {
+    "FIR_no": "412/2021",
+    "police_station": "Rajana",
+    "district": "Toba Tek Singh",
+    "sections": ["302", "148", "149 PPC"],
+    "investigating_officer": "Shamshad Ali, S.I.",
+    "post_mortem_by": "Dr. Muhammad Tasneem Nawaz",
+    "forensic_report": "Exh.PN",
+    "recovery": {
+      "weapon": ".30 bore pistol (P-1)",
+      "crime_empties": 6,
+      "issue": "Live bullets missing from forensic parcel creating doubt in chain of custody"
+    }
+  },
+  "legal_issues": [
+    {
+      "issue": "Rigor Mortis and Time of Death",
+      "finding": "Full rigor mortis observed within five hours in month of May was medically implausible; death likely occurred earlier than stated in FIR.",
+      "principle": "Rigor mortis is variable and influenced by temperature; inconsistency with ocular account creates doubt."
+    },
+    {
+      "issue": "Seminal Discharge",
+      "finding": "Seminal discharge is a recognized involuntary post-mortem reflex and does not prove prior sexual activity.",
+      "principle": "Post-mortem seminal emission has neutral medico-legal significance."
+    },
+    {
+      "issue": "Ocular Account Improvements",
+      "finding": "Material improvements made in private complaint to reconcile with medical evidence; discrepancies in number of fire shots.",
+      "principle": "Material contradictions between ocular and medical evidence weaken prosecution case."
+    },
+    {
+      "issue": "Improbable Presence of Eyewitnesses",
+      "finding": "Close relatives allegedly present remained unharmed; Investigating Officer recorded statements contradicting their presence.",
+      "principle": "Improbable conduct of witnesses casts doubt on presence at scene."
+    },
+    {
+      "issue": "Acquittal of Co-Accused",
+      "finding": "Co-accused attributed similar roles were acquitted; no strong independent corroboration against appellant.",
+      "principle": "When testimony disbelieved for some accused, requires strong corroboration to convict remaining."
+    },
+    {
+      "issue": "Recovery Doubtful",
+      "finding": "Discrepancy in forensic parcel; chain of custody compromised.",
+      "principle": "Tampered or doubtful recovery cannot sustain conviction."
+    },
+    {
+      "issue": "Motive Not Proved",
+      "finding": "Investigating Officer admitted motive not substantiated during investigation.",
+      "principle": "Unproven motive further weakens prosecution case."
+    },
+    {
+      "issue": "Benefit of Doubt",
+      "finding": "Multiple reasonable doubts exist.",
+      "principle": "Single reasonable doubt sufficient for acquittal."
+    }
+  ],
+  "arguments": {
+    "appellant": [
+      "Medical evidence contradicts timeline (rigor mortis).",
+      "Seminal discharge misinterpreted.",
+      "Ocular account inconsistent and improved.",
+      "Recovery and motive doubtful.",
+      "Benefit of doubt applies."
+    ],
+    "state": [
+      "Ocular account supported by medical evidence.",
+      "Weapon recovery matched crime empties.",
+      "Motive established due to prior enmity."
+    ]
+  },
+  "counsel": {
+    "appellant": ["Sardar Khurram Latif Khan Khosa"],
+    "state": ["Muhammad Waqas Anwar, Deputy Prosecutor General"],
+    "complainant": ["Muhammad Azhar Kashif"]
+  },
+  "judgment_summary": {
+    "Crl. Appeal No.82474-J/2022": "Allowed; conviction and death sentence set aside; appellant acquitted",
+    "Murder Reference No.331/2022": "Answered in Negative; death sentence not confirmed",
+    "P.S.L.A. No.82858/2022": "Dismissed",
+    "release_order": "Appellant to be released forthwith if not required in any other case"
+  },
+  "legal_references": [
+    {"case_name": "Saee Muhammad v. The State", "citation": "1985 P Cr. L J 2993"},
+    {"case_name": "Karam Khan v. The State", "citation": "1988 P Cr. L J 94"},
+    {"case_name": "Kanubbai Virjibhai v. State of Gujarat", "citation": "2014(1) GLR 655"},
+    {"case_name": "Ranjit Urang v. State of Tripura", "citation": "2013(3) GLD 92"},
+    {"case_name": "RIASAT ALI v. The STATE", "citation": "2024 SCMR 1224"},
+    {"case_name": "RAFAQAT ALI alias FOJI v. The State", "citation": "2024 SCMR 1579"},
+    {"case_name": "MAQSOOD ALAM v. The STATE", "citation": "2024 SCMR 156"},
+    {"case_name": "SHAUKAT HUSSAIN v. The STATE", "citation": "2024 SCMR 929"},
+    {"case_name": "MUHAMMAD HASSAN v. The STATE", "citation": "2024 SCMR 1427"},
+    {"case_name": "NAJAF ALI SHAH v. The STATE", "citation": "2021 SCMR 736"},
+    {"case_name": "The STATE v. AHMED OMAR SHEIKH", "citation": "2021 SCMR 873"}
+  ],
+  "remarks": "Due to medical inconsistency regarding rigor mortis, unreliable ocular account, doubtful recovery, unproven motive, and acquittal of similarly placed co-accused, the appellant was acquitted on benefit of doubt."
+}

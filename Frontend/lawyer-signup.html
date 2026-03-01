@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Lawyer Sign Up - Lexie Gneie</title>
+    <link rel="stylesheet" href="index.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo">⚖ Legal System</div>
+    </nav>
+    <main class="signup-page">
+        <section class="signup-intro">
+            <h1>Lawyer Registration</h1>
+            <p>Fill in your details to create a lawyer account.</p>
+        </section>
+        <form class="signup-form" id="lawyerSignupForm" style="max-width:400px;margin:0 auto;background:#fff;padding:32px 24px;border-radius:12px;box-shadow:0 8px 32px rgba(16,24,40,0.12);">
+            <div class="form-group">
+                <label for="lawyerName">Name</label>
+                <input type="text" id="lawyerName" name="name" required style="width:100%;padding:8px;margin-bottom:16px;border-radius:8px;border:1px solid #e6eefb;">
+            </div>
+            <div class="form-group">
+                <label for="lawyerEmail">Email</label>
+                <input type="email" id="lawyerEmail" name="email" required style="width:100%;padding:8px;margin-bottom:16px;border-radius:8px;border:1px solid #e6eefb;">
+            </div>
+            <div class="form-group">
+                <label for="lawyerSpecialization">Specialization Type</label>
+                <select id="lawyerSpecialization" name="specialization" required style="width:100%;padding:8px;margin-bottom:24px;border-radius:8px;border:1px solid #e6eefb;">
+                    <option value="">Select specialization</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="lawyerPassword">Password</label>
+                <input type="password" id="lawyerPassword" name="password" required style="width:100%;padding:8px;margin-bottom:16px;border-radius:8px;border:1px solid #e6eefb;">
+            </div>
+            <button type="submit" class="btn primary" style="width:100%;">Sign Up</button>
+        </form>
+    </main>
+    <footer class="site-footer">
+        <div class="footer-inner">
+            <div>© <span id="year-lawyer-signup"></span> Lexie Gneie</div>
+            <div class="footer-links">
+                <a href="#">Privacy</a>
+                <a href="#">Terms</a>
+            </div>
+        </div>
+    </footer>
+    <script>
+    document.getElementById('year-lawyer-signup').textContent = new Date().getFullYear();
+    document.getElementById('lawyerSignupForm').onsubmit = async function(e) {
+        e.preventDefault();
+        const name = document.getElementById('lawyerName').value.trim();
+        const email = document.getElementById('lawyerEmail').value.trim();
+        const password = document.getElementById('lawyerPassword').value;
+        const caseType = document.getElementById('lawyerSpecialization').value;
+        if (!name || !email || !password || !caseType) {
+            alert('All fields are required.');
+            return;
+        }
+        try {
+            const res = await fetch('http://127.0.0.1:5000/lawyer-signup', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    name,
+                    email,
+                    password,
+                    case_type: caseType
+                })
+            });
+            const json = await res.json();
+            if (res.ok && json.success) {
+                window.location.href = 'Lverify.html?email=' + encodeURIComponent(email);
+            } else {
+                alert(json.message || 'Signup failed.');
+            }
+        } catch (err) {
+            alert('Server error.');
+        }
+    };
+
+    // Fetch case types for specialization dropdown
+    const specializationSelect = document.getElementById('lawyerSpecialization');
+    let caseTypesLoaded = false;
+    specializationSelect.addEventListener('click', async function() {
+        if (caseTypesLoaded) return;
+        try {
+            let types = [
+                { name: 'Family Law' },
+                { name: 'Criminal Law' },
+                { name: 'Property Law' },
+                { name: 'Contract Dispute' }
+            ];
+            const res = await fetch('http://127.0.0.1:5000/dashboard/case-types');
+            if (res.ok) {
+                const json = await res.json();
+                if (Array.isArray(json)) types = json;
+                else if (json && Array.isArray(json.data)) types = json.data;
+                else if (json && Array.isArray(json.caseTypes)) types = json.caseTypes;
+                else if (json && typeof json === 'object') {
+                    const arr = Object.values(json).find(v => Array.isArray(v));
+                    if (arr) types = arr;
+                }
+            }
+            // Remove all except the first option
+            while (specializationSelect.options.length > 1) {
+                specializationSelect.remove(1);
+            }
+            // Add fetched types
+            types.forEach(t => {
+                const name = t.name || t.caseType || t.title || t.label || t.type || t.case_name;
+                if (name) {
+                    const opt = document.createElement('option');
+                    opt.value = name;
+                    opt.textContent = name;
+                    specializationSelect.appendChild(opt);
+                }
+            });
+            caseTypesLoaded = true;
+        } catch (e) {
+            // fallback already present
+        }
+    });
+    </script>
+</body>
+</html>

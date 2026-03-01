@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Lawyer Login - Lexie Gneie</title>
+    <link rel="stylesheet" href="index.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo">⚖ Legal System</div>
+    </nav>
+    <main class="signup-page">
+        <section class="signup-intro">
+            <h1>Lawyer Sign In</h1>
+            <p>Enter your credentials to access your lawyer dashboard.</p>
+        </section>
+        <form class="signup-form" id="lawyerLoginForm" style="max-width:400px;margin:0 auto;background:#fff;padding:32px 24px;border-radius:12px;box-shadow:0 8px 32px rgba(16,24,40,0.12);">
+            <div class="form-group">
+                <label for="lawyerEmail">Email</label>
+                <input type="email" id="lawyerEmail" name="email" required style="width:100%;padding:8px;margin-bottom:16px;border-radius:8px;border:1px solid #e6eefb;">
+            </div>
+            <div class="form-group">
+                <label for="lawyerPassword">Password</label>
+                <input type="password" id="lawyerPassword" name="password" required style="width:100%;padding:8px;margin-bottom:16px;border-radius:8px;border:1px solid #e6eefb;">
+            </div>
+            <button type="submit" class="btn primary" style="width:100%;">Sign In</button>
+            <div id="loginMessage" class="form-message" style="color:#d32f2f;margin-top:12px;text-align:center;"></div>
+        </form>
+    </main>
+    <footer class="site-footer">
+        <div class="footer-inner">
+            <div>© <span id="year-lawyer-login"></span> Lexie Gneie</div>
+            <div class="footer-links">
+                <a href="#">Privacy</a>
+                <a href="#">Terms</a>
+            </div>
+        </div>
+    </footer>
+    <script>
+    document.getElementById('year-lawyer-login').textContent = new Date().getFullYear();
+    document.getElementById('lawyerLoginForm').onsubmit = async function(e) {
+        e.preventDefault();
+        const email = document.getElementById('lawyerEmail').value.trim();
+        const password = document.getElementById('lawyerPassword').value;
+        const msg = document.getElementById('loginMessage');
+        msg.textContent = '';
+        if (!email || !password) {
+            msg.textContent = 'Please enter both email and password.';
+            return;
+        }
+        try {
+            const res = await fetch('http://127.0.0.1:5000/lawyer-login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email, password })
+            });
+            const json = await res.json();
+            if (res.ok && json.success) {
+                // Save lawyer name to localStorage if provided by backend
+                console.log('Login response:', json);
+                if (json.name) {
+                    localStorage.setItem('lg_lawyer_name', json.name);
+                    localStorage.setItem('authUser', JSON.stringify({ role: 'lawyer', name: json.name || '', email }));
+                    console.log('Saved lawyer name:', json.name);
+                    window.location.href = `Ldash.html?name=${encodeURIComponent(json.name)}`;
+                } else {
+                    // Optionally fetch name by email if not returned
+                    try {
+                        const infoRes = await fetch(`http://127.0.0.1:5000/lawyer-info-by-email?email=${encodeURIComponent(email)}`);
+                        const infoJson = await infoRes.json();
+                        if (infoJson.success && infoJson.data && infoJson.data.name) {
+                            localStorage.setItem('lg_lawyer_name', infoJson.data.name);
+                            localStorage.setItem('authUser', JSON.stringify({ role: 'lawyer', name: infoJson.data.name || '', email }));
+                            console.log('Fetched lawyer name:', infoJson.data.name);
+                            window.location.href = `Ldash.html?name=${encodeURIComponent(infoJson.data.name)}`;
+                        } else {
+                            msg.textContent = 'Could not retrieve lawyer name. Please check your account.';
+                        }
+                    } catch (e) { 
+                        console.log('Error fetching lawyer name by email:', e);
+                        msg.textContent = 'Could not retrieve lawyer name. Please check your account.';
+                    }
+                }
+            } else {
+                msg.textContent = json.message || 'Invalid credentials.';
+            }
+        } catch (err) {
+            msg.textContent = 'Server error.';
+        }
+    };
+    </script>
+</body>
+</html>

@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin Login</title>
+    <link rel="stylesheet" href="index.css">
+    <style>
+        .signup-page {
+            min-height: 100vh;
+            background: linear-gradient(120deg, #f1f5fe 60%, #e0e7ff 100%);
+            padding-bottom: 0;
+        }
+        .signup-intro {
+            text-align: center;
+            margin-top: 32px;
+            margin-bottom: 0;
+        }
+        .signup-form {
+            max-width: 400px;
+            margin: 0 auto;
+            background: #fff;
+            padding: 32px 24px;
+            border-radius: 12px;
+            box-shadow: 0 8px 32px rgba(16,24,40,0.12);
+        }
+        .form-group {
+            margin-bottom: 18px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 6px;
+            color: #2563eb;
+            font-weight: 600;
+        }
+        .signup-form input {
+            width: 100%;
+            padding: 8px;
+            border-radius: 8px;
+            border: 1px solid #e6eefb;
+            font-size: 16px;
+            margin-bottom: 8px;
+        }
+        .signup-form button {
+            width: 100%;
+            padding: 10px 0;
+            background: #2563eb;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        .form-message {
+            color: #d32f2f;
+            margin-top: 12px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo">⚖ Legal System</div>
+    </nav>
+    <main class="signup-page">
+        <section class="signup-intro">
+            <h1>Admin Sign In</h1>
+            <p>Enter your admin credentials to access the dashboard.</p>
+        </section>
+        <form class="signup-form" id="adminLoginForm">
+            <div class="form-group">
+                <label for="adminUsername">Username</label>
+                <input type="text" id="adminUsername" placeholder="Username" required autofocus />
+            </div>
+            <div class="form-group">
+                <label for="adminPassword">Password</label>
+                <input type="password" id="adminPassword" placeholder="Password" required />
+            </div>
+            <button type="submit" class="btn primary">Sign In</button>
+            <div id="adminLoginError" class="form-message"></div>
+        </form>
+    </main>
+    <footer class="site-footer">
+        <div class="footer-inner">
+            <div>© <span id="year-admin-login"></span> Lexie Gneie</div>
+            <div class="footer-links">
+                <a href="#">Privacy</a>
+                <a href="#">Terms</a>
+            </div>
+        </div>
+    </footer>
+    <script>
+        document.getElementById('year-admin-login').textContent = new Date().getFullYear();
+        document.getElementById('adminLoginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const username = document.getElementById('adminUsername').value.trim();
+            const password = document.getElementById('adminPassword').value;
+            const errorDiv = document.getElementById('adminLoginError');
+            errorDiv.textContent = '';
+            if (username === 'admin' && password === 'admin') {
+                localStorage.setItem('authUser', JSON.stringify({ role: 'admin', username: 'admin' }));
+                window.location.href = 'admin-dashboard.html';
+            } else {
+                errorDiv.textContent = 'Invalid admin credentials.';
+            }
+        });
+    </script>
+</body>
+</html>

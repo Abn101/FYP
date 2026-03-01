@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+        <script src="auth.js"></script>
+    <meta charset="UTF-8">
+    <title>AI Chatbot Query - Lexie Gneie</title>
+    <link rel="stylesheet" href="index.css">
+    <style>
+                                /* ChatGPT-style sticky input bar and scrollable chat area */
+                                .gpt-chat-outer {
+                                    display: flex;
+                                    flex-direction: column;
+                                    align-items: center;
+                                    justify-content: flex-start;
+                                    width: 100vw;
+                                    min-height: 80vh;
+                                    position: relative;
+                                    padding-top: 32px;
+                                }
+                                .chatbot-content-area {
+                                    display: flex;
+                                    flex-direction: column;
+                                    align-items: center;
+                                    width: 100%;
+                                    max-width: 600px;
+                                    margin: 0 auto;
+                                    padding: 0 0 32px 0;
+                                    min-height: 200px;
+                                    overflow-y: auto;
+                                    flex: 1 1 auto;
+                                }
+                                .gpt-chat-form {
+                                    position: fixed;
+                                    left: 0;
+                                    right: 0;
+                                    bottom: 0;
+                                    margin: 0 auto 0 auto;
+                                    z-index: 10;
+                                    max-width: 600px;
+                                    width: 100%;
+                                    background: rgba(255,255,255,0.97);
+                                    box-shadow: 0 -2px 16px rgba(37,99,235,0.08);
+                                    border-radius: 32px 32px 0 0;
+                                    padding-bottom: 18px;
+                                }
+                                @media (max-width: 600px) {
+                                    .gpt-chat-form {
+                                        max-width: 100vw;
+                                        border-radius: 0;
+                                    }
+                                }
+                        /* ChatGPT-style message area */
+                        .chatbot-content-area {
+                            display: flex;
+                            flex-direction: column;
+                            align-items: center;
+                            width: 100%;
+                            max-width: 600px;
+                            margin: 0 auto;
+                            padding: 0 0 32px 0;
+                            min-height: 200px;
+                        }
+                        .chatbot-msg-card {
+                            width: 100%;
+                            max-width: 95%;
+                            margin: 10px 0;
+                            border-radius: 14px;
+                            box-shadow: 0 2px 8px rgba(37,99,235,0.06);
+                            padding: 18px 20px;
+                            font-size: 1.08em;
+                            color: #22223b;
+                            background: #fff;
+                            word-break: break-word;
+                        }
+                        .chatbot-msg-user {
+                            background: #e0e7ff;
+                            color: #1e293b;
+                            align-self: flex-end;
+                        }
+                        .chatbot-msg-ai {
+                            background: #f7f7fa;
+                            color: #22223b;
+                            align-self: flex-start;
+                        }
+                /* ChatGPT-style code and file blocks */
+                .gpt-block {
+                    background: #f7f7fa;
+                    border-radius: 12px;
+                    padding: 18px 20px;
+                    margin: 18px 0;
+                    font-size: 1.08em;
+                    color: #22223b;
+                    box-shadow: 0 2px 8px rgba(37,99,235,0.06);
+                    border: 1px solid #e0e7ff;
+                }
+                .gpt-block.code {
+                    font-family: 'Fira Mono', 'Consolas', 'Menlo', monospace;
+                    background: #f3f6fa;
+                    color: #1e293b;
+                    overflow-x: auto;
+                    padding: 16px 18px;
+                    border-left: 4px solid #2563eb;
+                }
+                .gpt-block.file {
+                    background: #e0e7ff;
+                    color: #22223b;
+                    font-family: 'Fira Mono', 'Consolas', 'Menlo', monospace;
+                    font-size: 1.1em;
+                    display: inline-block;
+                    padding: 8px 16px;
+                    border-radius: 8px;
+                    margin: 10px 0;
+                    border-left: 4px solid #16a34a;
+                }
+                .gpt-block .gpt-block-title {
+                    font-weight: 700;
+                    margin-bottom: 8px;
+                    color: #2563eb;
+                }
+                /* ChatGPT-style message cards */
+                .chatbot-msg-card {
+                    background: transparent;
+                    border-radius: 0;
+                    box-shadow: none;
+                    padding: 18px 20px;
+                    margin: 16px 0;
+                    font-size: 1.08em;
+                    color: #22223b;
+                    max-width: 90%;
+                }
+                .chatbot-msg-user {
+                    background: #e0e7ff;
+                    color: #1e293b;
+                    align-self: flex-end;
+                }
+                .chatbot-msg-ai {
+                    background: #f7f7fa;
+                    color: #22223b;
+                    align-self: flex-start;
+                }
+        body {
+            background: linear-gradient(120deg, #f1f5fe 60%, #e0e7ff 100%);
+            margin: 0;
+            font-family: 'Segoe UI', Arial, sans-serif;
+        }
+        .gpt-centered-container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        .gpt-centered-title {
+            font-size: 2.8rem;
+            color: #22223b;
+            font-weight: 800;
+            margin-bottom: 2.8rem;
+            text-align: center;
+            letter-spacing: -1px;
+        }
+        .gpt-chat-form {
+            display: flex;
+            align-items: center;
+            width: 100%;
+            max-width: 520px;
+            background: #f4f6fa;
+            border-radius: 32px;
+            box-shadow: 0 2px 16px rgba(37,99,235,0.08);
+            padding: 0.7rem 1.5rem 0.7rem 1.5rem;
+            margin-bottom: 0.5rem;
+            transition: box-shadow 0.18s;
+        }
+        .gpt-chat-form:focus-within {
+            box-shadow: 0 4px 32px rgba(37,99,235,0.16);
+        }
+        .gpt-chat-form input[type="text"] {
+            flex: 1;
+            border: none;
+            background: transparent;
+            font-size: 1.25rem;
+            padding: 0.8rem 0.5rem;
+            outline: none;
+            transition: color 0.18s;
+        }
+        .gpt-chat-form input[type="text"]:focus {
+            color: #2563eb;
+        }
+        .gpt-chat-form button {
+            background: linear-gradient(90deg, #2563eb 60%, #1e3a8a 100%);
+            color: #fff;
+            border: none;
+            border-radius: 50%;
+            width: 48px;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            cursor: pointer;
+            margin-left: 0.5rem;
+            box-shadow: 0 2px 8px rgba(37,99,235,0.10);
+            transition: background 0.2s, box-shadow 0.18s;
+        }
+        .gpt-chat-form button:hover {
+            background: #fff;
+            color: #2563eb;
+            border: 2px solid #2563eb;
+            box-shadow: 0 4px 16px rgba(37,99,235,0.16);
+        }
+        /* Centered card effect */
+        .gpt-centered-container {
+            display: none;
+        }
+        .gpt-chat-root {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            width: 100vw;
+            position: fixed;
+            left: 0;
+            top: 0;
+            z-index: 1;
+            background: linear-gradient(120deg, #f1f5fe 60%, #e0e7ff 100%);
+        }
+        .gpt-chat-navbar {
+            flex: 0 0 auto;
+        }
+        .gpt-chat-outer {
+            flex: 1 1 auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-end;
+            width: 100vw;
+            max-width: 100vw;
+            min-height: 0;
+            position: relative;
+            padding-bottom: 80px;
+        }
+        .chatbot-content-area {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 0 0 32px 0;
+            min-height: 0;
+            overflow-y: auto;
+            flex: 1 1 auto;
+        }
+        .gpt-chat-form {
+            position: fixed;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            margin: 0 auto 0 auto;
+            z-index: 10;
+            max-width: 600px;
+            width: 100%;
+            background: rgba(255,255,255,0.97);
+            box-shadow: 0 -2px 16px rgba(37,99,235,0.08);
+            border-radius: 32px 32px 0 0;
+            padding-bottom: 18px;
+        }
+        @media (max-width: 600px) {
+            .gpt-centered-container {
+                padding: 24px 2vw 0 2vw;
+                max-width: 100vw;
+            }
+            .gpt-centered-title {
+                font-size: 2rem;
+            }
+        }
+                /* Make the whole page a column, like ChatGPT */
+                body {
+                    min-height: 100vh;
+                    background: linear-gradient(120deg, #f1f5fe 60%, #e0e7ff 100%);
+                    font-family: 'Segoe UI', Arial, sans-serif;
+                }
+                nav.navbar {
+                    width: 100vw;
+                    min-width: 100vw;
+                    margin: 0;
+                    left: 0;
+                    top: 0;
+                    border-radius: 0;
+                }
+        .gpt-chat-form {
+            display: flex;
+            align-items: center;
+            width: 100%;
+            max-width: 480px;
+            background: #f4f6fa;
+            border-radius: 32px;
+            box-shadow: 0 1px 8px rgba(0,0,0,0.04);
+            padding: 0.5rem 1.2rem 0.5rem 1.2rem;
+        }
+        .gpt-chat-form input[type="text"] {
+            flex: 1;
+            border: none;
+            background: transparent;
+            font-size: 1.2rem;
+            padding: 0.7rem 0.5rem;
+            outline: none;
+        }
+        .gpt-chat-form button {
+            background: #2563eb;
+            color: #fff;
+            border: none;
+            border-radius: 50%;
+            width: 44px;
+            height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            cursor: pointer;
+            margin-left: 0.5rem;
+            transition: background 0.2s;
+        }
+        .gpt-chat-form button:hover {
+            background: #1e40af;
+        }
+        .chatbot-history-area {
+            width: 100%;
+            max-width: 480px;
+            margin-top: 24px;
+            background: #f8fafc;
+            border-radius: 18px;
+            box-shadow: 0 2px 12px rgba(37,99,235,0.07);
+            padding: 18px 12px 18px 12px;
+            min-height: 120px;
+            max-height: 340px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+        }
+        .chatbot-msg-card {
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 1px 4px rgba(37,99,235,0.06);
+            padding: 16px 18px;
+            margin-bottom: 0;
+            font-size: 1.08rem;
+            color: #222;
+            word-break: break-word;
+        }
+        .chatbot-msg-user {
+            text-align: right;
+            color: #2563eb;
+            font-weight: 600;
+            margin-bottom: 2px;
+        }
+        .chatbot-msg-ai {
+            text-align: left;
+        }
+        .chatbot-msg-card h4, .chatbot-msg-card h5 {
+            margin: 10px 0 6px 0;
+            color: #1e40af;
+            font-size: 1.08em;
+        }
+        .chatbot-msg-card ul {
+            margin: 6px 0 6px 18px;
+        }
+        .chatbot-msg-card li {
+            margin-bottom: 2px;
+        }
+        .chatbot-msg-error {
+            color: #d32f2f;
+            font-weight: 500;
+        }
+        @media (max-width: 600px) {
+            .gpt-centered-title { font-size: 1.5rem; }
+            .gpt-chat-form { max-width: 98vw; }
+            .chatbot-history-area { max-width: 98vw; }
+        }
+    </style>
+</head>
+<body>
+        <script>authCheck({ requiredRole: 'lawyer' }); setupLogoutButton();</script>
+        <nav class="navbar">
+            <div class="logo">⚖ Legal System</div>
+            <ul class="nav-links">
+                <li><a href="Ldash.html">Dashboard</a></li>
+                <li><a href="lawyer-chatbot-query.html" class="active">AI Chatbot</a></li>
+                <li><a href="#" id="logoutBtn" class="btn primary" style="margin-left:8px;">Logout</a></li>
+            </ul>
+        </nav>
+        <div class="gpt-chat-root" style="width:100vw;min-height:100vh;display:flex;flex-direction:column;">
+            <div class="gpt-chat-navbar">
+                <nav class="navbar">
+                    <div class="logo">⚖ Legal System</div>
+                    <ul class="nav-links">
+                        <li><a href="Ldash.html">Dashboard</a></li>
+                        <li><a href="lawyer-chatbot-query.html" class="active">AI Chatbot</a></li>
+                        <li><a href="#" id="logoutBtn" class="btn primary" style="margin-left:8px;">Logout</a></li>
+                    </ul>
+                </nav>
+            </div>
+            <div class="gpt-chat-outer" style="flex:1 1 auto;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;width:100vw;max-width:100vw;padding-top:0;margin-top:0;">
+                <div id="chatbotHistory" class="chatbot-content-area" style="width:100vw;max-width:100vw;min-height:calc(100vh - 120px);"></div>
+                <form class="gpt-chat-form" id="chatForm" autocomplete="off" style="max-width:100vw;width:100vw;">
+                    <input type="text" id="lawyerQuery" class="chatbot-input" placeholder="Ask anything" required />
+                    <button type="submit" aria-label="Send" class="btn primary chatbot-send-btn"><span style="font-size:1.3em;">&#9658;</span></button>
+                </form>
+            </div>
+        </div>
+    <script>
+    const chatForm = document.getElementById('chatForm');
+    const lawyerQuery = document.getElementById('lawyerQuery');
+    const chatbotHistory = document.getElementById('chatbotHistory');
+
+
+    chatForm.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        const query = lawyerQuery.value.trim();
+        if (!query) return;
+        // User message card
+        // User message with avatar (right-aligned)
+        const userMsgWrapper = document.createElement('div');
+        userMsgWrapper.style.display = 'flex';
+        userMsgWrapper.style.justifyContent = 'flex-end';
+        userMsgWrapper.style.alignItems = 'flex-end';
+        userMsgWrapper.style.gap = '8px';
+        userMsgWrapper.style.width = '100vw';
+        userMsgWrapper.style.paddingRight = '24px';
+        const userAvatar = document.createElement('div');
+        userAvatar.innerHTML = `<img src='https://ui-avatars.com/api/?name=You&background=2563eb&color=fff&rounded=true&size=36' alt='User' style='width:36px;height:36px;border-radius:50%;box-shadow:0 1px 4px #2563eb22;'>`;
+        const userMsg = document.createElement('div');
+        userMsg.className = 'chatbot-msg-card chatbot-msg-user';
+        userMsg.innerHTML = query;
+        userMsgWrapper.appendChild(userMsg);
+        userMsgWrapper.appendChild(userAvatar);
+        chatbotHistory.appendChild(userMsgWrapper);
+        lawyerQuery.value = '';
+        lawyerQuery.disabled = true;
+        chatForm.querySelector('button').disabled = true;
+        // Auto-scroll to bottom
+        chatbotHistory.scrollTop = chatbotHistory.scrollHeight;
+        try {
+            const resp = await fetch('http://127.0.0.1:5000/legal/query', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ query })
+            });
+            const data = await resp.json();
+            // AI message with avatar (left-aligned)
+            const aiMsgWrapper = document.createElement('div');
+            aiMsgWrapper.style.display = 'flex';
+            aiMsgWrapper.style.justifyContent = 'flex-start';
+            aiMsgWrapper.style.alignItems = 'flex-end';
+            aiMsgWrapper.style.gap = '8px';
+            aiMsgWrapper.style.width = '100vw';
+            aiMsgWrapper.style.paddingLeft = '24px';
+            const aiAvatar = document.createElement('div');
+            aiAvatar.innerHTML = `<img src='https://ui-avatars.com/api/?name=AI&background=f7f7fa&color=2563eb&rounded=true&size=36' alt='AI' style='width:36px;height:36px;border-radius:50%;box-shadow:0 1px 4px #2563eb22;'>`;
+            const aiMsg = document.createElement('div');
+            aiMsg.className = 'chatbot-msg-card chatbot-msg-ai';
+            if (data.analysis) {
+                aiMsg.innerHTML = formatAnalysis(data.analysis);
+            } else if (data.error) {
+                aiMsg.innerHTML = `<span class='chatbot-msg-error'>Error: ${data.error}</span>`;
+            }
+            if (data.retrieved_cases && Array.isArray(data.retrieved_cases) && data.retrieved_cases.length > 0) {
+                aiMsg.innerHTML += `<div style='font-size:13px;color:#2563eb;margin-top:10px;'><strong>Similar Cases (References):</strong><ul style='margin:4px 0 0 16px;'>${data.retrieved_cases.map(c => {
+                    if (typeof c === 'string') return `<li>${c}</li>`;
+                    // Convert case_number to a readable case name (e.g., "Crl. Appeal No. 1566-J of 2019" -> "Crl. Appeal 1566-J/2019")
+                    let caseName = c.case_number ? c.case_number.replace(/No\.\s*/g, '').replace(/\s*\/\s*/g, ' | ').replace(/\sof\s/g, '/') : 'Unknown Case';
+                    let summary = '';
+                    if (c.judgment_summary) {
+                        try {
+                            const jsum = typeof c.judgment_summary === 'string' ? JSON.parse(c.judgment_summary) : c.judgment_summary;
+                            summary = jsum.final_order ? `<div style='color:#222;font-size:12px;margin-top:2px;'>${jsum.final_order}</div>` : '';
+                        } catch { summary = ''; }
+                    }
+                    return `<li><span style='font-weight:600;color:#1e293b;'>${caseName}</span> <span style='color:#64748b;font-size:12px;'>(reference)</span>${summary}</li>`;
+                }).join('')}</ul></div>`;
+            }
+            aiMsgWrapper.appendChild(aiAvatar);
+            aiMsgWrapper.appendChild(aiMsg);
+            chatbotHistory.appendChild(aiMsgWrapper);
+            // Auto-scroll to bottom
+            chatbotHistory.scrollTop = chatbotHistory.scrollHeight;
+        } catch (e) {
+            const errMsg = document.createElement('div');
+            errMsg.className = 'chatbot-msg-card chatbot-msg-error';
+            errMsg.textContent = 'Error contacting AI server.';
+            chatbotHistory.appendChild(errMsg);
+            chatbotHistory.scrollTop = chatbotHistory.scrollHeight;
+        }
+        lawyerQuery.disabled = false;
+        chatForm.querySelector('button').disabled = false;
+        lawyerQuery.focus();
+    });
+
+    // Format analysis text into readable HTML (headings, lists, etc.)
+    function formatAnalysis(text) {
+        // Convert markdown-style headings and lists to HTML
+        let html = text
+            .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+            .replace(/\n\n/g, '<br><br>')
+            .replace(/\n/g, '<br>');
+        // Convert numbered headings (e.g., **4. How to Use in Argument:**) to h4
+        html = html.replace(/<strong>(\d+\..*?:)<\/strong>/g, '<h4>$1</h4>');
+        // Convert subheadings (e.g., **Key Legal Issues Addressed:**) to h5
+        html = html.replace(/<strong>([A-Za-z].*?:)<\/strong>/g, '<h5>$1</h5>');
+        // Convert * bullets to <ul><li>
+        html = html.replace(/\* ([^\n<]*)/g, '<li>$1</li>');
+        // Wrap <li> in <ul> if not already
+        html = html.replace(/(<li>.*?<\/li>)/gs, '<ul>$1</ul>');
+        return html;
+    }
+
+    // Autofocus input on load
+    window.onload = () => lawyerQuery.focus();
+    </script>
+</body>
+</html>

@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Sign Up - Lexie Gneie</title>
+    <link rel="stylesheet" href="index.css">
+</head>
+<body>
+
+    <nav class="navbar">
+        <div class="logo">⚖ Legal System</div>
+        <ul class="nav-links">
+            <li><a href="index.html">Home</a></li>
+            <li><a href="signup.html" class="active">Sign Up</a></li>
+            <li><a href="login-selection.html">Login</a></li>
+        </ul>
+    </nav>
+
+    <main class="signup-page">
+        <section class="signup-intro">
+            <h1>Create your account</h1>
+            <p>Choose the appropriate signup flow below to register as a lawyer or a client.</p>
+        </section>
+
+        <section class="signup-options">
+            <div class="signup-card">
+                <div class="feature-icon" aria-hidden="true">
+                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M12 2v6" stroke="#1e3a8a" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M6 8v8a6 6 0 0012 0V8" stroke="#1e3a8a" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </div>
+                <h3>Lawyer Sign Up</h3>
+                <p>Create a lawyer account to accept cases, consult with clients, and use AI drafting tools.</p>
+                <a class="btn primary" href="lawyer-signup.html">Sign up as Lawyer</a>
+            </div>
+
+            <div class="signup-card">
+                <div class="feature-icon" aria-hidden="true">
+                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M4 7h16v10a2 2 0 01-2 2H6a2 2 0 01-2-2V7z" stroke="#1e3a8a" stroke-width="1.5" stroke-linejoin="round"/>
+                    </svg>
+                </div>
+                <h3>Client Sign Up</h3>
+                <p>Register as a client to submit case requests, book consultations, and track case progress.</p>
+                <a class="btn ghost" href="/Frontend/client-signup.html">Sign up as Client</a>
+            </div>
+        </section>
+    </main>
+
+    <footer class="site-footer">
+        <div class="footer-inner">
+            <div>© <span id="year-signup"></span> Lexie Gneie</div>
+            <div class="footer-links">
+                <a href="#">Privacy</a>
+                <a href="#">Terms</a>
+            </div>
+        </div>
+    </footer>
+
+    <script>document.getElementById('year-signup').textContent = new Date().getFullYear();</script>
+
+</body>
+</html>

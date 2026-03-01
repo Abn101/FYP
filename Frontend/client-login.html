@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Client Login - Lexie Gneie</title>
+    <link rel="stylesheet" href="index.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo">⚖ Legal System</div>
+        <ul class="nav-links"></ul>
+    </nav>
+
+    <main class="site-main">
+        <section class="form-container">
+            <h1>Client Login</h1>
+            <p>Sign in to access your dashboard.</p>
+
+            <form id="loginForm" class="signup-form" novalidate>
+                <div class="form-field">
+                    <label for="email">Email</label>
+                    <input id="email" name="email" type="email" required autocomplete="email">
+                </div>
+
+                <div class="form-field">
+                    <label for="password">Password</label>
+                    <input id="password" name="password" type="password" required autocomplete="current-password">
+                </div>
+
+                <div class="form-message" id="loginMessage" role="status" aria-live="polite"></div>
+
+                <div class="form-actions">
+                    <button id="loginBtn" class="btn primary" type="submit">Sign in</button>
+                    <a class="btn ghost" href="index.html">Back</a>
+                </div>
+            </form>
+        </section>
+    </main>
+
+    <footer class="site-footer">
+        <div class="footer-inner">
+            <div>© <span id="year-login"></span> Lexie Gneie</div>
+            <div class="footer-links">
+                <a href="#">Privacy</a>
+                <a href="#">Terms</a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+    document.getElementById('year-login').textContent = new Date().getFullYear();
+
+    const form = document.getElementById('loginForm');
+    const msg = document.getElementById('loginMessage');
+    const btn = document.getElementById('loginBtn');
+
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        msg.textContent = '';
+        const email = document.getElementById('email').value.trim();
+        const password = document.getElementById('password').value;
+        if (!email || !password) {
+            msg.textContent = 'Please enter both email and password.';
+            return;
+        }
+
+        btn.disabled = true; btn.textContent = 'Signing in...';
+        try {
+            const res = await fetch('http://127.0.0.1:5000/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email, password })
+            });
+            const data = await res.json().catch(() => ({ success: false, message: 'Invalid response' }));
+            if (!res.ok || !data.success) {
+                msg.textContent = data.message || 'Login failed';
+                return;
+            }
+            console.log('Login successful:', data);
+            // Save client name and role to localStorage for frontend auth
+            localStorage.setItem('lg_client_name', data.name || '');
+            localStorage.setItem('authUser', JSON.stringify({ role: 'client', name: data.name || '', email }));
+            // Redirect to backend-provided redirect or client dashboard
+            window.location.href =  'client-dashboard.html';
+        } catch (err) {
+            console.error(err);
+            msg.textContent = 'Network error while logging in.';
+        } finally {
+            btn.disabled = false; btn.textContent = 'Sign in';
+        }
+    });
+    </script>
+</body>
+</html>

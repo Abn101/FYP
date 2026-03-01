@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Verify Account - Lexie Gneie</title>
+    <link rel="stylesheet" href="index.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo">⚖ Legal System</div>
+        <ul class="nav-links"></ul>
+    </nav>
+
+    <main class="site-main">
+        <section class="form-container">
+            <h1>Verify your account</h1>
+            <p>Enter the verification code we sent to your email.</p>
+
+            <div class="form-field">
+                <label for="code">Verification code</label>
+                <input id="code" name="code" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="8" autocomplete="one-time-code">
+            </div>
+
+            <div class="form-message" id="verifyMessage" role="status" aria-live="polite"></div>
+
+            <div class="form-actions">
+                <button id="verifyBtn" class="btn primary">Verify</button>
+                <a class="btn ghost" href="client-signup.html">Back</a>
+            </div>
+        </section>
+    </main>
+
+    <footer class="site-footer">
+        <div class="footer-inner">
+            <div>© <span id="year-verify"></span> Lexie Gneie</div>
+            <div class="footer-links">
+                <a href="#">Privacy</a>
+                <a href="#">Terms</a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+    document.getElementById('year-verify').textContent = new Date().getFullYear();
+
+    function qs(name) {
+        const params = new URLSearchParams(window.location.search);
+        return params.get(name);
+    }
+
+    const email = qs('email') || '';
+    const msg = document.getElementById('verifyMessage');
+    const btn = document.getElementById('verifyBtn');
+
+    btn.addEventListener('click', async (e) => {
+        e.preventDefault();
+        msg.textContent = '';
+        const code = document.getElementById('code').value.trim();
+        if (!code) { msg.textContent = 'Please enter the verification code.'; return; }
+        if (!email) { msg.textContent = 'Missing email address. Please sign up again.'; return; }
+
+        btn.disabled = true;
+        btn.textContent = 'Verifying...';
+
+        try {
+            const res = await fetch(`http://127.0.0.1:5000/verify?email=${encodeURIComponent(email)}`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ code })
+            });
+            const data = await res.json().catch(() => ({ success: false, message: 'Invalid response' }));
+            if (!res.ok || !data.success) {
+                msg.textContent = data.message || 'Verification failed';
+                btn.disabled = false;
+                btn.textContent = 'Verify';
+                return;
+            }
+
+            // Show success and redirect to login
+            msg.textContent = 'Verification successful — redirecting to login...';
+            setTimeout(() => {
+                window.location.href = data.redirect || '/login';
+            }, 1400);
+        } catch (err) {
+            console.error(err);
+            msg.textContent = 'Network error while verifying.';
+        } finally {
+            btn.disabled = false;
+            btn.textContent = 'Verify';
+        }
+    });
+    </script>
+</body>
+</html>

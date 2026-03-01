@@ -1,0 +1,150 @@
+{
+  "case_number": "Crl. Appeal No. 1566-J of 2019 / Crl. Appeal No. 1567-J of 2019 / Crl. Revision No. 469 of 2019",
+  "citation": "2026 LHC 945",
+  "court": "Lahore High Court, Multan Bench",
+  "judges": ["Mr. Justice Sardar Akbar Ali"],
+  "parties": {
+    "appellant": [
+      {"name": "Allah Ditta"},
+      {"name": "Ijaz Ahmad"}
+    ],
+    "respondent": "The State",
+    "complainant": "Bashir Ahmad",
+    "co_accused": [],
+    "deceased": "Ghulam Akbar"
+  },
+  "case_type": "Criminal Appeal / Private Complaint",
+  "trial_court": {
+    "court_name": "Additional Sessions Judge, Rajanpur Model Criminal Trial Court",
+    "judgment_date": "12-12-2019",
+    "conviction_section": "302(b)/34 PPC",
+    "sentence": "Imprisonment for life"
+  },
+  "decision_date": "26-01-2026",
+  "facts": {
+    "incident_date": "13-05-2019",
+    "incident_time": "",
+    "location": "",
+    "deceased": {"name": "Ghulam Akbar"},
+    "summary": "FIR No.298/2019 registered at Fazilpur, Rajanpur. Conviction: 302(b)/34 PPC, Sentence: Imprisonment for life"
+  },
+  "investigation": {
+    "FIR_no": "298/2019",
+    "police_station": "Fazilpur",
+    "district": "Rajanpur",
+    "sections": ["302", "394", "34 PPC"],
+    "investigating_officer": "",
+    "post_mortem_by": "",
+    "forensic_report": "",
+    "recovery": {}
+  },
+  "legal_issues": [
+    {
+      "issue": "Delay in FIR",
+      "finding": "Unexplained delay of two hours and ten minutes in lodging FIR despite short distance created doubt.",
+      "principle": "Unexplained delay indicates deliberation and consultation, rendering prosecution story doubtful.",
+      "relied_cases": [
+        "Mehmood Ahmed & 3 others vs. The State & another (1995 SCMR 127)",
+        "Zafar Ali Abbasi and another vs. Zafar Ali Abbasi and others (2024 SCMR 1773)",
+        "Manzar Abbas and another vs. The State (2025 SCMR 1024)",
+        "Muhammad alias Ahmad vs. The State (2025 SCMR 2052)"
+      ]
+    },
+    {
+      "issue": "Chance Witnesses",
+      "finding": "Eyewitnesses failed to justify presence and acted unnaturally.",
+      "principle": "Testimony of chance witness not accepted without convincing explanation.",
+      "relied_cases": [
+        "Mst Shazia Parveen vs. The State (2014 SCMR 1197)",
+        "Muhammad Rafique vs. The State (2014 SCMR 1698)",
+        "Naveed Asghar and 2 others vs. The State (PLD 2021 SC 600)",
+        "Abdul Khaliq vs. The State (2021 SCMR 325)",
+        "Muhammad Hassan and another vs. The State and others (2024 SCMR 1427)",
+        "Imran vs. The State (2026 SCMR 47)",
+        "Abdul Hayee and Abdullah alias Ghazali and another Versus The State and others (2025 SCMR 281)"
+      ]
+    },
+    {
+      "issue": "Dishonest Improvements",
+      "finding": "Witnesses improved statements by attributing new roles to accused.",
+      "principle": "Dishonest improvements cast serious doubt and render testimony unreliable.",
+      "relied_cases": [
+        "Mst. Saima Noreen and another Vs. The State (2024 SCMR 1310)",
+        "Fateh Khan vs. The State and others (2025 SCMR 1408)",
+        "Muhammad Nasir Butt and 2 others vs. The State and others (2025 SCMR 662)"
+      ]
+    },
+    {
+      "issue": "Identification Parade",
+      "finding": "Identification parade unreliable due to prior exposure and conflicting roles.",
+      "principle": "Test identification loses value if irregularities or prior exposure exist.",
+      "relied_cases": [
+        "Abdul Qadeer vs. The State (2024 SCMR 1146)",
+        "Tahseen Ullah and another vs. The State (2025 SCMR 2018)"
+      ]
+    },
+    {
+      "issue": "Non-production of Blood-Stained Clothes",
+      "finding": "Failure to produce blood-stained clothes weakened prosecution case.",
+      "principle": "Non-production prevents corroboration and undermines veracity.",
+      "relied_cases": [
+        "Mst. Sughra Begum and another vs. Qaiser Pervez and others (2015 SCMR 1142)",
+        "Mst. Mir Zalai vs. Ghazi Khan and others (2020 SCMR 319)"
+      ]
+    },
+    {
+      "issue": "Medical Evidence",
+      "finding": "Medical evidence only corroborative; cannot sustain conviction without reliable ocular account.",
+      "principle": "Medical evidence confirms injuries but cannot identify accused.",
+      "relied_cases": [
+        "Munawar Ali alias Munawar Hussain vs. The State (PLD 1993 SC 251)",
+        "Muhammad Jahangir and another Vs. The State and others (2024 SCMR 1741)"
+      ]
+    },
+    {
+      "issue": "Recovery under Section 103 Cr.P.C.",
+      "finding": "Recovery discarded due to absence of independent witnesses.",
+      "principle": "Violation of Section 103 Cr.P.C. renders recovery unreliable.",
+      "relied_cases": [
+        "Muhammad Ismail and others vs. The State (2017 SCMR 713)",
+        "Gul Dast Khan vs. The State (2009 SCMR 431)",
+        "Muhammad Hussain vs. The State (2011 SCMR 1127)"
+      ]
+    },
+    {
+      "issue": "Benefit of Doubt",
+      "finding": "Multiple doubts in prosecution case entitled appellants to acquittal.",
+      "principle": "Single reasonable doubt sufficient for acquittal.",
+      "relied_cases": [
+        "Muhammad Riaz vs. Khurram Shehzad and another (2024 SCMR 51)",
+        "Muhammad Nawaz and another vs. The State and others (2024 SCMR 1731)"
+      ]
+    }
+  ],
+  "arguments": {
+    "appellant": [],
+    "state": []
+  },
+  "counsel": {
+    "appellant": [],
+    "state": [],
+    "complainant": []
+  },
+  "judgment_summary": {
+    "final_order": "Conviction and sentence set aside; appellants acquitted"
+  },
+  "legal_references": [
+    {"case_name": "Mehmood Ahmed & 3 others vs. The State & another (1995 SCMR 127)", "citation": ""},
+    {"case_name": "Zafar Ali Abbasi and another vs. Zafar Ali Abbasi and others (2024 SCMR 1773)", "citation": ""},
+    {"case_name": "Manzar Abbas and another vs. The State (2025 SCMR 1024)", "citation": ""},
+    {"case_name": "Muhammad alias Ahmad vs. The State (2025 SCMR 2052)", "citation": ""},
+    {"case_name": "Mst Shazia Parveen vs. The State (2014 SCMR 1197)", "citation": ""},
+    {"case_name": "Muhammad Rafique vs. The State (2014 SCMR 1698)", "citation": ""},
+    {"case_name": "Naveed Asghar and 2 others vs. The State (PLD 2021 SC 600)", "citation": ""},
+    {"case_name": "Abdul Khaliq vs. The State (2021 SCMR 325)", "citation": ""},
+    {"case_name": "Muhammad Hassan and another vs. The State and others (2024 SCMR 1427)", "citation": ""},
+    {"case_name": "Imran vs. The State (2026 SCMR 47)", "citation": ""},
+    {"case_name": "Abdul Hayee and Abdullah alias Ghazali and another Versus The State and others (2025 SCMR 281)", "citation": ""}
+  ],
+  "remarks": "Acquittal or conviction based on findings in issues: Delay in FIR, Chance Witnesses, Dishonest Improvements, Identification Parade, Non-production of Blood-Stained Clothes, Medical Evidence, Recovery under Section 103 Cr.P.C., Benefit of Doubt"
+}

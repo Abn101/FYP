@@ -1,0 +1,120 @@
+{
+  "case_number": "Criminal Appeal No.67701-J of 2020 / Criminal Appeal No.67702-J of 2020 / Criminal Revision No.2533 of 2021",
+  "court": "Lahore High Court",
+  "judges": ["Abher Gul Khan"],
+  "parties": {
+    "appellant": [
+      {"name": "Muhammad Irfan", "father_name": "Shameer"},
+      {"name": "Muhammad Farhan", "father_name": "Shameer"},
+      {"name": "Muhammad Irfan", "father_name": "Zafar Iqbal"},
+      {"name": "Sajid Hussain", "father_name": "Not mentioned"}
+    ],
+    "respondent": "The State",
+    "complainant": "Maalik Dad"
+  },
+  "case_type": "Criminal Appeal / Criminal Revision",
+  "related_cases": [
+    "Criminal Appeal No.67701-J of 2020",
+    "Criminal Appeal No.67702-J of 2020",
+    "Criminal Revision No.2533 of 2021"
+  ],
+  "decision_date": "28-01-2026",
+  "facts": {
+    "incident_date": "15-03-2018",
+    "incident_time": "9:30 a.m.",
+    "location": "Barber shop of Zamin Abbas, Market Sarfraz Colony, Jauharabad",
+    "victim": {"name": "Muhammad Shehzad", "age": "23/24 years"},
+    "summary": "The appellants allegedly fired multiple shots at Muhammad Shehzad inside a barber shop, causing fatal injuries. The prosecution relied on two eyewitnesses and alleged motive of prior quarrel."
+  },
+  "investigation": {
+    "FIR_no": "108/2018",
+    "police_station": "City Jauharabad",
+    "investigating_officer": "Abdul Jabbar, SI",
+    "arrests": [
+      {"name": "Muhammad Irfan (s/o Shameer)", "date": "05-04-2018"},
+      {"name": "Muhammad Farhan", "date": "05-04-2018"},
+      {"name": "Sajid Hussain", "date": "23-04-2018"},
+      {"name": "Muhammad Irfan (s/o Zafar Iqbal)", "date": "04-05-2018"}
+    ],
+    "evidence_collected": {
+      "firearms": [
+        {"type": "9 mm pistol", "recovered_from": "Muhammad Irfan (s/o Shameer)"},
+        {"type": ".30 bore pistol", "recovered_from": "Muhammad Farhan"},
+        {"type": ".30 bore pistol", "recovered_from": "Sajid Hussain"},
+        {"type": "9 mm pistol", "recovered_from": "Muhammad Irfan (s/o Zafar Iqbal)"}
+      ],
+      "crime_empties": {
+        "9mm": 8,
+        ".30_bore": 5
+      },
+      "other_items": [
+        "Barber chair with firing marks",
+        "Blood samples",
+        "Currency note Rs.50",
+        "Metallic kara"
+      ]
+    },
+    "forensic_reports": ["PFSA reports Exh.PT", "PFSA reports Exh.PV"],
+    "medical_evidence": {
+      "post_mortem_by": "Dr. Hassan Saqib",
+      "total_injuries": "20 (15 entry wounds, 5 exit wounds)",
+      "entry_wounds_with_blackening": [1,2,5,7,9,12,14,16,19,20]
+    }
+  },
+  "legal_issues": [
+    {
+      "issue": "Delay in FIR registration",
+      "finding": "Complainant had mobile phone but did not inform police immediately; FIR not registered in manner portrayed."
+    },
+    {
+      "issue": "Unreliability of eyewitnesses",
+      "finding": "Eyewitnesses were chance witnesses; failed to justify presence at spot; testimony unreliable."
+    },
+    {
+      "issue": "Withholding of material witness",
+      "finding": "Non-production of barber Zamin Abbas led to adverse presumption under Article 129(g) Qanun-e-Shahadat Order."
+    },
+    {
+      "issue": "Contradiction between medical and ocular evidence",
+      "finding": "Blackening on wounds inconsistent with alleged firing distance of 6–9 feet; prosecution version doubtful."
+    },
+    {
+      "issue": "Forensic evidence unreliable",
+      "finding": "PFSA reports silent regarding live cartridges; could not cure defects in prosecution case."
+    },
+    {
+      "issue": "Motive not proven",
+      "finding": "Alleged prior quarrel vague; no specific details; motive not established."
+    },
+    {
+      "issue": "Benefit of doubt",
+      "finding": "Multiple doubts in prosecution case entitled appellants to acquittal."
+    }
+  ],
+  "arguments": {
+    "appellant": [
+      "FIR delay; chance witnesses; withholding of material witness; medical contradiction; unreliable forensic report; motive not proved; benefit of doubt."
+    ],
+    "respondent": [
+      "FIR registered promptly; eyewitness account consistent; recoveries and PFSA reports support prosecution; motive established."
+    ]
+  },
+  "counsel": {
+    "appellant": ["Rai Bashir Ahmad", "Saika Javed", "Syed Hassan Mehdi Rizvi"],
+    "complainant": ["Mian Ijaz Yousaf"],
+    "state": ["Sadia Arif"]
+  },
+  "judgment_summary": {
+    "Criminal Appeal No.67701-J of 2020": "Allowed; conviction and sentence set aside; appellants acquitted",
+    "Criminal Appeal No.67702-J of 2020": "Allowed; conviction and sentence set aside; appellant acquitted",
+    "Criminal Revision No.2533 of 2021": "Dismissed",
+    "release_of_appellants": "Forthwith if not required in any other case"
+  },
+  "legal_references": [
+    {"case_name": "Muhammad Rafique v. State", "citation": "PLJ 2011 Supreme Court 191"},
+    {"case_name": "Lal Khan v. The State", "citation": "2006 SCMR 1846"},
+    {"case_name": "Amin Ali v. The State", "citation": "2011 SCMR 323"},
+    {"case_name": "Muhammad Zaman v. The State", "citation": "2014 SCMR 749"}
+  ],
+  "remarks": "Due to delay in FIR, unreliable chance witnesses, withholding of material witness, medical contradiction regarding blackening, unreliable forensic reports, and unproven motive, the appellants were acquitted."
+}

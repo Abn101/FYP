@@ -1,0 +1,47 @@
+[
+  {
+    "file": "1.json",
+    "case_number": "81797-J of 2022",
+    "judgment_summary": {
+      "Criminal Appeal No.81797-J of 2022": "Allowed; appellant Usman acquitted; prior conviction and sentences set aside",
+      "Murder Reference No.23 of 2023": "Answered in Negative; death sentence not confirmed",
+      "P.S.L.A. No.81996 of 2022": "Dismissed",
+      "release_of_appellants": "Forthwith, if not required in any other case"
+    }
+  },
+  {
+    "file": "2.json",
+    "case_number": "Criminal Appeal No.67701-J of 2020 / Criminal Appeal No.67702-J of 2020 / Criminal Revision No.2533 of 2021",
+    "judgment_summary": {
+      "Criminal Appeal No.67701-J of 2020": "Allowed; conviction and sentence set aside; appellants acquitted",
+      "Criminal Appeal No.67702-J of 2020": "Allowed; conviction and sentence set aside; appellant acquitted",
+      "Criminal Revision No.2533 of 2021": "Dismissed",
+      "release_of_appellants": "Forthwith if not required in any other case"
+    }
+  },
+  {
+    "file": "3.json",
+    "case_number": "Crl. Appeal No. 1566-J of 2019 / Crl. Appeal No. 1567-J of 2019 / Crl. Revision No. 469 of 2019",
+    "judgment_summary": {
+      "final_order": "Conviction and sentence set aside; appellants acquitted"
+    }
+  },
+  {
+    "file": "4.json",
+    "case_number": "Crl. Appeal No.82474-J/2022 / Murder Reference No.331/2022 / P.S.L.A. No.82858/2022",
+    "judgment_summary": {
+      "Crl. Appeal No.82474-J/2022": "Allowed; conviction and death sentence set aside; appellant acquitted",
+      "Murder Reference No.331/2022": "Answered in Negative; death sentence not confirmed",
+      "P.S.L.A. No.82858/2022": "Dismissed",
+      "release_order": "Appellant to be released forthwith if not required in any other case"
+    }
+  },
+  {
+    "file": "5.json",
+    "case_number": "Criminal Petitions No.176-K to 179-K of 2022 and 1493 of 2022",
+    "judgment_summary": {
+      "Criminal Petitions No.176-K to 179-K of 2022": "Converted into appeal; conviction under Section 302(b) PPC converted to Section 302(c) PPC; sentence reduced to 15 years imprisonment; remaining convictions maintained; benefit of Section 382-B Cr.P.C extended",
+      "Criminal Petition No.1493 of 2022": "Dismissed; acquittal of co-accused maintained"
+    }
+  }
+]

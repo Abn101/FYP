@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Verify Lawyer - Lexie Gneie</title>
+    <link rel="stylesheet" href="index.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo">⚖ Legal System</div>
+    </nav>
+    <main class="signup-page">
+        <section class="signup-intro">
+            <h1>Verify Your Account</h1>
+            <p>Enter the verification code sent to your email to activate your lawyer account.</p>
+        </section>
+        <form class="signup-form" id="verifyLawyerForm" style="max-width:400px;margin:0 auto;background:#fff;padding:32px 24px;border-radius:12px;box-shadow:0 8px 32px rgba(16,24,40,0.12);">
+            <div class="form-group">
+                <label for="verificationCode">Verification Code</label>
+                <input type="text" id="verificationCode" name="code" required style="width:100%;padding:8px;margin-bottom:16px;border-radius:8px;border:1px solid #e6eefb;">
+            </div>
+            <button type="submit" class="btn primary" style="width:100%;">Verify</button>
+        </form>
+        <div id="verifyMessage" class="form-message" style="color:#d32f2f;margin-top:12px;text-align:center;"></div>
+    </main>
+    <footer class="site-footer">
+        <div class="footer-inner">
+            <div>© <span id="year-verify-lawyer"></span> Lexie Gneie</div>
+            <div class="footer-links">
+                <a href="#">Privacy</a>
+                <a href="#">Terms</a>
+            </div>
+        </div>
+    </footer>
+    <script>
+    document.getElementById('year-verify-lawyer').textContent = new Date().getFullYear();
+    // Get email from URL
+    function qs(name) {
+        const params = new URLSearchParams(window.location.search);
+        return params.get(name);
+    }
+    const email = qs('email');
+    document.getElementById('verifyLawyerForm').onsubmit = async function(e) {
+        e.preventDefault();
+        const code = document.getElementById('verificationCode').value.trim();
+        const msg = document.getElementById('verifyMessage');
+        msg.textContent = '';
+        if (!email || !code) {
+            msg.textContent = 'Email and code are required.';
+            return;
+        }
+        try {
+            const res = await fetch(`http://127.0.0.1:5000/verify-lawyer?email=${encodeURIComponent(email)}`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ code })
+            });
+            const json = await res.json();
+            if (res.ok && json.success) {
+                window.location.href = 'login-selection.html';
+            } else {
+                msg.textContent = json.message || 'Invalid verification code. Please try again.';
+            }
+        } catch (err) {
+            msg.textContent = 'Server error.';
+        }
+    };
+    </script>
+</body>
+</html>
