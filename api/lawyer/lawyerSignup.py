@@ -1,16 +1,23 @@
 from flask import Blueprint, request, jsonify
 from dbOperations.dbConn import get_connection
-import bcrypt, random, smtplib
+import bcrypt, os, random, smtplib
 from email.mime.text import MIMEText
+from dotenv import load_dotenv
+
+load_dotenv()
 
 lawyer_signup_bp = Blueprint("lawyer_signup", __name__)
 
 # ------------------------- Email Function -------------------------
 def send_email(to_email, code):
-    smtp_server = "smtp.gmail.com"
-    smtp_port = 587
-    sender_email = "f2021266406@umt.edu.pk"
-    sender_password = "ailruuhkatosdgsz"
+    smtp_server = os.getenv("SMTP_SERVER", "smtp.gmail.com")
+    smtp_port = int(os.getenv("SMTP_PORT", "587"))
+    sender_email = os.getenv("SENDER_EMAIL", "")
+    sender_password = os.getenv("SENDER_PASSWORD", "")
+
+    if not sender_email or not sender_password:
+        print("❌ SMTP credentials not configured. Set SENDER_EMAIL and SENDER_PASSWORD.")
+        return
 
     subject = "Lawyer Signup Verification"
     body = f"Your verification code is: {code}"

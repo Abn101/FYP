@@ -5,13 +5,16 @@ import numpy as np
 from sentence_transformers import SentenceTransformer
 import os
 import ollama  # just import the module
+from dotenv import load_dotenv
+
+load_dotenv()
 
 # ---------------- CONFIG ----------------
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 INDEX_FILE = os.path.join(BASE_DIR, "cases_local.index")
 META_FILE = os.path.join(BASE_DIR, "metadata_local.json")
 MODEL_NAME = "all-MiniLM-L6-v2"  # embeddings
-LLM_MODEL = "gemma3:1b"
+LLM_MODEL = os.getenv("LLM_MODEL", "gemma3:1b")
 TOP_K = 1
 
 # ---------------- LOAD INDEX AND METADATA ----------------
